@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Govt. Girls High School Kagdana, Sirsa</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Crimson+Pro:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --maroon: #7B1C1C;
+    --maroon-dark: #4A0E0E;
+    --maroon-light: #A02828;
+    --gold: #C9A84C;
+    --gold-light: #E8C96A;
+    --cream: #FDFAF5;
+    --cream-dark: #F2EDE2;
+    --text: #2C1810;
+    --text-muted: #7A6358;
+    --white: #FFFFFF;
+    --border: #E2D5C3;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Crimson Pro', serif;
+    background: var(--cream);
+    color: var(--text);
+    font-size: 17px;
+    line-height: 1.7;
+  }
+
+  /* NAV */
+  nav {
+    background: var(--maroon-dark);
+    padding: 0 2rem;
+    position: sticky; top: 0; z-index: 100;
+    border-bottom: 3px solid var(--gold);
+    box-shadow: 0 4px 20px rgba(74,14,14,0.4);
+  }
+  .nav-inner {
+    max-width: 1200px; margin: 0 auto;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 64px;
+  }
+  .nav-brand {
+    display: flex; align-items: center; gap: 12px;
+    text-decoration: none; color: var(--white);
+  }
+  .nav-logo {
+    width: 44px; height: 44px; border-radius: 50%;
+    background: var(--gold);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 700;
+    color: var(--maroon-dark); flex-shrink: 0;
+  }
+  .nav-title { font-family: 'Crimson Pro', serif; font-weight: 600; font-size: 15px; line-height: 1.3; }
+  .nav-title span { display: block; font-size: 11px; font-weight: 300; opacity: 0.8; letter-spacing: 0.08em; text-transform: uppercase; }
+  .nav-links { display: flex; align-items: center; gap: 6px; }
+  .nav-links a {
+    color: rgba(255,255,255,0.85); text-decoration: none;
+    padding: 6px 14px; border-radius: 4px;
+    font-size: 14px; font-weight: 500; transition: all 0.2s;
+    letter-spacing: 0.03em;
+  }
+  .nav-links a:hover, .nav-links a.active { background: rgba(201,168,76,0.2); color: var(--gold-light); }
+  .nav-links .btn-admin {
+    background: var(--gold); color: var(--maroon-dark);
+    font-weight: 600; border-radius: 4px;
+  }
+  .nav-links .btn-admin:hover { background: var(--gold-light); }
+
+  /* TICKER */
+  .ticker {
+    background: var(--gold); color: var(--maroon-dark);
+    padding: 6px 0; overflow: hidden; position: relative;
+  }
+  .ticker-inner { display: flex; gap: 60px; white-space: nowrap; animation: ticker 30s linear infinite; }
+  .ticker-inner span { font-size: 13px; font-weight: 600; letter-spacing: 0.05em; }
+  .ticker-inner span::before { content: "◆ "; }
+  @keyframes ticker { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+  /* HERO */
+  .hero {
+    background: linear-gradient(160deg, var(--maroon-dark) 0%, var(--maroon) 55%, #9B3030 100%);
+    padding: 80px 2rem 100px;
+    position: relative; overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background-image:
+      radial-gradient(circle at 20% 50%, rgba(201,168,76,0.08) 0%, transparent 50%),
+      radial-gradient(circle at 80% 20%, rgba(201,168,76,0.06) 0%, transparent 40%);
+  }
+  .hero::after {
+    content: '';
+    position: absolute; bottom: 0; left: 0; right: 0;
+    height: 60px;
+    background: var(--cream);
+    clip-path: ellipse(55% 100% at 50% 100%);
+  }
+  .hero-grid {
+    max-width: 1200px; margin: 0 auto;
+    display: grid; grid-template-columns: 1fr 380px; gap: 60px;
+    align-items: center; position: relative; z-index: 1;
+  }
+  .hero-eyebrow {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(201,168,76,0.15); border: 1px solid rgba(201,168,76,0.4);
+    color: var(--gold-light); padding: 4px 14px; border-radius: 50px;
+    font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.2rem, 4vw, 3.4rem);
+    font-weight: 700; color: var(--white); line-height: 1.2;
+    margin-bottom: 12px;
+  }
+  .hero h1 em { color: var(--gold-light); font-style: normal; }
+  .hero-sub {
+    font-size: 17px; color: rgba(255,255,255,0.75);
+    margin-bottom: 32px; max-width: 480px; font-weight: 300;
+  }
+  .hero-motto {
+    font-family: 'Playfair Display', serif; font-style: italic;
+    color: var(--gold-light); font-size: 16px; margin-bottom: 36px;
+    padding-left: 20px; border-left: 3px solid var(--gold);
+  }
+  .hero-ctas { display: flex; gap: 14px; flex-wrap: wrap; }
+  .btn-primary {
+    background: var(--gold); color: var(--maroon-dark);
+    padding: 12px 28px; border-radius: 6px; text-decoration: none;
+    font-weight: 600; font-size: 15px; transition: all 0.2s;
+    border: none; cursor: pointer; display: inline-block;
+  }
+  .btn-primary:hover { background: var(--gold-light); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.2); }
+  .btn-outline {
+    background: transparent; color: var(--white);
+    padding: 11px 28px; border-radius: 6px; text-decoration: none;
+    font-weight: 500; font-size: 15px; transition: all 0.2s;
+    border: 1.5px solid rgba(255,255,255,0.4); display: inline-block; cursor: pointer;
+  }
+  .btn-outline:hover { border-color: var(--gold-light); color: var(--gold-light); transform: translateY(-2px); }
+
+  /* STATS CARD */
+  .stats-card {
+    background: rgba(255,255,255,0.08); backdrop-filter: blur(10px);
+    border: 1px solid rgba(201,168,76,0.3); border-radius: 16px;
+    padding: 28px; display: grid; grid-template-columns: 1fr 1fr; gap: 4px;
+  }
+  .stat-item { padding: 16px; text-align: center; }
+  .stat-item:not(:last-child) { border-bottom: 1px solid rgba(201,168,76,0.15); }
+  .stat-item:nth-child(odd):not(:last-child) { border-right: 1px solid rgba(201,168,76,0.15); }
+  .stat-num {
+    font-family: 'Playfair Display', serif; font-size: 2rem;
+    color: var(--gold-light); font-weight: 700; display: block;
+  }
+  .stat-label { font-size: 12px; color: rgba(255,255,255,0.6); letter-spacing: 0.08em; text-transform: uppercase; }
+
+  /* SECTIONS */
+  section { padding: 72px 2rem; }
+  .section-header { text-align: center; margin-bottom: 52px; }
+  .section-tag {
+    display: inline-block; background: rgba(123,28,28,0.1);
+    color: var(--maroon); padding: 4px 16px; border-radius: 50px;
+    font-size: 12px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+  .section-title {
+    font-family: 'Playfair Display', serif; font-size: clamp(1.8rem, 3vw, 2.6rem);
+    color: var(--maroon-dark); margin-bottom: 12px;
+  }
+  .section-sub { color: var(--text-muted); max-width: 520px; margin: 0 auto; font-size: 16px; }
+  .divider {
+    width: 60px; height: 3px; margin: 16px auto 0;
+    background: linear-gradient(90deg, var(--gold), var(--gold-light));
+    border-radius: 2px;
+  }
+
+  /* NOTICE BOARD */
+  .notices-section { background: var(--cream); }
+  .notices-grid { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 2fr 1fr; gap: 32px; }
+  .notice-board {
+    background: var(--white); border-radius: 16px; overflow: hidden;
+    border: 1px solid var(--border); box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+  }
+  .notice-board-header {
+    background: var(--maroon); padding: 18px 24px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .notice-board-header h3 { font-family: 'Playfair Display', serif; color: var(--white); font-size: 1.1rem; }
+  .notice-board-header a { color: var(--gold-light); font-size: 13px; text-decoration: none; }
+  .notice-list { padding: 8px 0; max-height: 360px; overflow-y: auto; }
+  .notice-item {
+    padding: 14px 24px; border-bottom: 1px solid var(--border);
+    display: flex; gap: 16px; align-items: flex-start; transition: background 0.15s;
+    cursor: pointer;
+  }
+  .notice-item:hover { background: var(--cream); }
+  .notice-item:last-child { border-bottom: none; }
+  .notice-date {
+    background: var(--maroon); color: var(--white); border-radius: 8px;
+    padding: 6px 10px; text-align: center; min-width: 50px; flex-shrink: 0;
+    font-family: 'DM Mono', monospace;
+  }
+  .notice-date .day { font-size: 20px; font-weight: 500; display: block; line-height: 1; }
+  .notice-date .mon { font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; opacity: 0.85; }
+  .notice-content h4 { font-size: 15px; font-weight: 600; margin-bottom: 3px; color: var(--text); }
+  .notice-content p { font-size: 13px; color: var(--text-muted); line-height: 1.4; }
+  .notice-badge {
+    display: inline-block; font-size: 10px; padding: 2px 8px;
+    border-radius: 50px; font-weight: 600; letter-spacing: 0.06em; margin-top: 6px;
+  }
+  .badge-sports { background: #E8F5E8; color: #2E7D32; }
+  .badge-academic { background: #E3F2FD; color: #1565C0; }
+  .badge-cultural { background: #FFF3E0; color: #E65100; }
+  .badge-exam { background: #FCE4EC; color: #C62828; }
+  .badge-general { background: #F3E5F5; color: #6A1B9A; }
+
+  /* QUICK LINKS */
+  .quick-links-panel {
+    display: flex; flex-direction: column; gap: 16px;
+  }
+  .quick-card {
+    background: var(--white); border-radius: 12px;
+    border: 1px solid var(--border); overflow: hidden;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+  }
+  .quick-card-header { background: var(--maroon-dark); padding: 14px 18px; }
+  .quick-card-header h4 { font-family: 'Playfair Display', serif; color: var(--gold-light); font-size: 1rem; }
+  .quick-links-list { padding: 8px 0; }
+  .quick-link-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 18px; text-decoration: none; color: var(--text);
+    border-bottom: 1px solid var(--border); transition: all 0.15s; font-size: 14px;
+  }
+  .quick-link-item:last-child { border-bottom: none; }
+  .quick-link-item:hover { background: var(--cream); color: var(--maroon); }
+  .quick-link-item .icon {
+    width: 28px; height: 28px; background: rgba(123,28,28,0.08);
+    border-radius: 6px; display: flex; align-items: center; justify-content: center;
+    font-size: 14px; flex-shrink: 0;
+  }
+
+  /* ACTIVITIES GRID */
+  .activities-section { background: var(--cream-dark); }
+  .activities-grid { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+  .activity-card {
+    background: var(--white); border-radius: 14px; overflow: hidden;
+    border: 1px solid var(--border); box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+    transition: transform 0.25s, box-shadow 0.25s;
+  }
+  .activity-card:hover { transform: translateY(-5px); box-shadow: 0 12px 36px rgba(0,0,0,0.12); }
+  .activity-thumb {
+    height: 190px; overflow: hidden; position: relative;
+    background: linear-gradient(135deg, var(--maroon) 0%, #9B3030 100%);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .activity-thumb img { width: 100%; height: 100%; object-fit: cover; }
+  .activity-thumb-icon { font-size: 52px; opacity: 0.6; }
+  .activity-cat-badge {
+    position: absolute; top: 12px; left: 12px;
+    background: var(--gold); color: var(--maroon-dark);
+    padding: 3px 10px; border-radius: 50px; font-size: 11px; font-weight: 700;
+    letter-spacing: 0.06em; text-transform: uppercase;
+  }
+  .activity-body { padding: 20px; }
+  .activity-body .date { font-size: 12px; color: var(--text-muted); font-family: 'DM Mono', monospace; margin-bottom: 8px; }
+  .activity-body h3 { font-family: 'Playfair Display', serif; font-size: 1.1rem; margin-bottom: 8px; color: var(--maroon-dark); }
+  .activity-body p { font-size: 14px; color: var(--text-muted); line-height: 1.5; }
+  .view-more-wrap { text-align: center; margin-top: 40px; }
+
+  /* FEATURES */
+  .features-section { background: var(--maroon-dark); }
+  .features-grid { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; }
+  .feature-card {
+    background: rgba(255,255,255,0.05); border: 1px solid rgba(201,168,76,0.2);
+    border-radius: 14px; padding: 28px 22px; text-align: center; transition: all 0.25s;
+  }
+  .feature-card:hover { background: rgba(201,168,76,0.08); border-color: rgba(201,168,76,0.5); transform: translateY(-4px); }
+  .feature-icon {
+    width: 60px; height: 60px; margin: 0 auto 18px;
+    background: rgba(201,168,76,0.15); border-radius: 14px;
+    display: flex; align-items: center; justify-content: center; font-size: 28px;
+  }
+  .feature-card h3 { font-family: 'Playfair Display', serif; color: var(--gold-light); font-size: 1.05rem; margin-bottom: 10px; }
+  .feature-card p { font-size: 14px; color: rgba(255,255,255,0.6); line-height: 1.5; }
+  .features-section .section-title { color: var(--white); }
+  .features-section .section-sub { color: rgba(255,255,255,0.6); }
+  .features-section .section-tag { background: rgba(201,168,76,0.15); color: var(--gold-light); }
+
+  /* PRINCIPAL MSG */
+  .principal-section { background: var(--cream); }
+  .principal-inner { max-width: 1000px; margin: 0 auto; display: grid; grid-template-columns: 260px 1fr; gap: 56px; align-items: start; }
+  .principal-photo-wrap { text-align: center; }
+  .principal-photo {
+    width: 200px; height: 200px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--maroon), #9B3030);
+    margin: 0 auto 16px; border: 5px solid var(--gold);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 72px; color: rgba(255,255,255,0.5);
+    box-shadow: 0 8px 32px rgba(123,28,28,0.3);
+  }
+  .principal-name { font-family: 'Playfair Display', serif; font-size: 1.2rem; color: var(--maroon-dark); margin-bottom: 4px; }
+  .principal-title { font-size: 13px; color: var(--text-muted); font-style: italic; }
+  .principal-msg blockquote {
+    font-family: 'Playfair Display', serif; font-style: italic;
+    font-size: 1.5rem; color: var(--maroon); line-height: 1.5;
+    margin-bottom: 20px; padding-left: 24px;
+    border-left: 4px solid var(--gold);
+  }
+  .principal-msg p { color: var(--text-muted); margin-bottom: 14px; font-size: 16px; }
+
+  /* FOOTER */
+  footer {
+    background: var(--maroon-dark); color: rgba(255,255,255,0.7);
+    padding: 52px 2rem 24px; border-top: 4px solid var(--gold);
+  }
+  .footer-grid { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 48px; margin-bottom: 40px; }
+  .footer-brand .logo-wrap { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+  .footer-logo { width: 48px; height: 48px; border-radius: 50%; background: var(--gold); display: flex; align-items: center; justify-content: center; font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 700; color: var(--maroon-dark); }
+  .footer-school-name { font-family: 'Playfair Display', serif; font-size: 1.1rem; color: var(--white); line-height: 1.3; }
+  .footer-school-name span { display: block; font-family: 'Crimson Pro', serif; font-size: 13px; font-weight: 300; color: rgba(255,255,255,0.6); }
+  .footer-brand p { font-size: 14px; line-height: 1.6; max-width: 300px; }
+  .footer-col h4 { font-family: 'Playfair Display', serif; color: var(--gold-light); font-size: 1rem; margin-bottom: 16px; }
+  .footer-col ul { list-style: none; }
+  .footer-col ul li { margin-bottom: 10px; }
+  .footer-col ul li a { color: rgba(255,255,255,0.65); text-decoration: none; font-size: 14px; transition: color 0.15s; }
+  .footer-col ul li a:hover { color: var(--gold-light); }
+  .footer-col .contact-item { display: flex; gap: 10px; align-items: flex-start; margin-bottom: 12px; font-size: 14px; }
+  .footer-bottom { max-width: 1200px; margin: 0 auto; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px; display: flex; justify-content: space-between; align-items: center; font-size: 13px; }
+  .footer-bottom a { color: var(--gold-light); text-decoration: none; }
+
+  /* EMPTY STATE */
+  .empty-notice {
+    padding: 40px 24px; text-align: center; color: var(--text-muted); font-style: italic; font-size: 15px;
+  }
+
+  @media (max-width: 900px) {
+    .hero-grid { grid-template-columns: 1fr; }
+    .stats-card { display: none; }
+    .notices-grid { grid-template-columns: 1fr; }
+    .activities-grid { grid-template-columns: 1fr 1fr; }
+    .features-grid { grid-template-columns: 1fr 1fr; }
+    .principal-inner { grid-template-columns: 1fr; text-align: center; }
+    .principal-msg blockquote { border-left: none; border-top: 4px solid var(--gold); padding-left: 0; padding-top: 16px; }
+    .footer-grid { grid-template-columns: 1fr 1fr; }
+    .nav-links { display: none; }
+  }
+  @media (max-width: 600px) {
+    .activities-grid { grid-template-columns: 1fr; }
+    .features-grid { grid-template-columns: 1fr; }
+    .footer-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-inner">
+    <a href="index.html" class="nav-brand">
+      <div class="nav-logo">गस</div>
+      <div class="nav-title">Govt. Girls High School Kagdana<span>Sirsa, Haryana</span></div>
+    </a>
+    <div class="nav-links">
+      <a href="index.html" class="active">Home</a>
+      <a href="activities.html">Activities</a>
+      <a href="results.html">Results</a>
+      <a href="about.html">About</a>
+      <a href="admin.html" class="btn-admin">Admin Panel</a>
+    </div>
+  </div>
+</nav>
+
+<!-- TICKER -->
+<div class="ticker">
+  <div class="ticker-inner" id="ticker-text">
+    <span>Welcome to Govt. Girls High School Kagdana, Sirsa</span>
+    <span>Annual Examinations Schedule Now Available</span>
+    <span>Sports Day Celebration on 15th December</span>
+    <span>Results for Classes 6–10 Declared</span>
+    <span>Admission Open for Session 2025–26</span>
+    <span>Welcome to Govt. Girls High School Kagdana, Sirsa</span>
+    <span>Annual Examinations Schedule Now Available</span>
+    <span>Sports Day Celebration on 15th December</span>
+    <span>Results for Classes 6–10 Declared</span>
+    <span>Admission Open for Session 2025–26</span>
+  </div>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-grid">
+    <div>
+      <div class="hero-eyebrow">★ Est. 1968 &nbsp;·&nbsp; Sirsa, Haryana</div>
+      <h1>Govt. Girls<br><em>High School Kagdana</em><br>Sirsa</h1>
+      <p class="hero-sub">Empowering young women through quality education, discipline, and holistic development in the heart of Sirsa.</p>
+      <p class="hero-motto">"ज्ञान ही शक्ति है — Knowledge is Power"</p>
+      <div class="hero-ctas">
+        <a href="results.html" class="btn-primary">Check Your Result</a>
+        <a href="activities.html" class="btn-outline">Recent Activities</a>
+      </div>
+    </div>
+    <div class="stats-card">
+      <div class="stat-item">
+        <span class="stat-num">1200+</span>
+        <span class="stat-label">Students</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num">45+</span>
+        <span class="stat-label">Teachers</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num">55+</span>
+        <span class="stat-label">Years</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num">98%</span>
+        <span class="stat-label">Pass Rate</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- NOTICES + QUICK LINKS -->
+<section class="notices-section">
+  <div class="notices-grid">
+    <div class="notice-board">
+      <div class="notice-board-header">
+        <h3>📋 Notice Board</h3>
+        <a href="activities.html">View All →</a>
+      </div>
+      <div class="notice-list" id="notice-list">
+        <div class="empty-notice">Loading notices…</div>
+      </div>
+    </div>
+    <div class="quick-links-panel">
+      <div class="quick-card">
+        <div class="quick-card-header"><h4>Quick Links</h4></div>
+        <div class="quick-links-list">
+          <a href="results.html" class="quick-link-item"><div class="icon">📊</div> Check Result</a>
+          <a href="activities.html" class="quick-link-item"><div class="icon">📰</div> Activities & News</a>
+          <a href="about.html#faculty" class="quick-link-item"><div class="icon">👩‍🏫</div> Our Faculty</a>
+          <a href="about.html#gallery" class="quick-link-item"><div class="icon">🖼️</div> Photo Gallery</a>
+          <a href="about.html#contact" class="quick-link-item"><div class="icon">📞</div> Contact Us</a>
+        </div>
+      </div>
+      <div class="quick-card">
+        <div class="quick-card-header"><h4>Academic Session 2024–25</h4></div>
+        <div class="quick-links-list">
+          <a href="results.html" class="quick-link-item"><div class="icon">📝</div> Term 1 Results</a>
+          <a href="results.html" class="quick-link-item"><div class="icon">📝</div> Term 2 Results</a>
+          <a href="activities.html" class="quick-link-item"><div class="icon">📅</div> Exam Schedule</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- RECENT ACTIVITIES -->
+<section class="activities-section">
+  <div class="section-header">
+    <div class="section-tag">School Life</div>
+    <h2 class="section-title">Recent Activities</h2>
+    <p class="section-sub">Celebrating achievements, events, and milestones from our vibrant school community.</p>
+    <div class="divider"></div>
+  </div>
+  <div class="activities-grid" id="activities-grid">
+    <!-- Loaded from localStorage -->
+  </div>
+  <div class="view-more-wrap">
+    <a href="activities.html" class="btn-primary">View All Activities</a>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="features-section">
+  <div class="section-header">
+    <div class="section-tag">Why Choose Us</div>
+    <h2 class="section-title">Our Pillars of Excellence</h2>
+    <p class="section-sub">A holistic environment that nurtures academic brilliance and personal growth.</p>
+    <div class="divider"></div>
+  </div>
+  <div class="features-grid">
+    <div class="feature-card">
+      <div class="feature-icon">📚</div>
+      <h3>Academic Excellence</h3>
+      <p>Structured curriculum aligned with Haryana Board, with expert teachers dedicated to every student's success.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🏆</div>
+      <h3>Sports & Athletics</h3>
+      <p>State-level competitions, annual sports day, and physical education for complete development.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🎨</div>
+      <h3>Arts & Culture</h3>
+      <p>Annual cultural programs, drawing competitions, debates, and extracurricular activities.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🔬</div>
+      <h3>Science & Labs</h3>
+      <p>Well-equipped science laboratory and computer lab encouraging curiosity and practical learning.</p>
+    </div>
+  </div>
+</section>
+
+<!-- PRINCIPAL MESSAGE -->
+<section class="principal-section">
+  <div class="section-header">
+    <div class="section-tag">Leadership</div>
+    <h2 class="section-title">Principal's Message</h2>
+    <div class="divider"></div>
+  </div>
+  <div class="principal-inner">
+    <div class="principal-photo-wrap">
+      <div class="principal-photo">👩</div>
+      <div class="principal-name">Mrs. Sunita Devi</div>
+      <div class="principal-title">Principal, GGHS Sirsa</div>
+    </div>
+    <div class="principal-msg">
+      <blockquote>"Education is the most powerful weapon which you can use to change the world."</blockquote>
+      <p>Welcome to Govt. Girls High School Kagdana, Sirsa. Since our establishment in 1968, we have been committed to providing quality education to girls from all walks of life in the Sirsa district.</p>
+      <p>Our school stands as a beacon of hope and opportunity. We believe every student carries within herself the potential for greatness, and our role is to nurture that spark through rigorous academics, co-curricular activities, and values-based education.</p>
+      <p>I invite parents and students to make the most of the resources and opportunities available here. Together, we will continue to write stories of success and achievement.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <div class="logo-wrap">
+        <div class="footer-logo">गस</div>
+        <div class="footer-school-name">Govt. Girls High School Kagdana<span>Sirsa, Haryana — Est. 1968</span></div>
+      </div>
+      <p>A government institution committed to empowering girls through quality education, moral values, and holistic development under the Department of School Education, Haryana.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Navigation</h4>
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="activities.html">Activities & News</a></li>
+        <li><a href="results.html">Student Results</a></li>
+        <li><a href="about.html">About School</a></li>
+        <li><a href="admin.html">Admin Panel</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Contact Us</h4>
+      <div class="contact-item">📍 Near Bus Stand, Sirsa, Haryana – 125055</div>
+      <div class="contact-item">📞 01666-XXXXXX</div>
+      <div class="contact-item">📧 gghs.sirsa@hry.edu.in</div>
+      <div class="contact-item">🕐 Mon–Sat: 7:30 AM – 2:00 PM</div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2025 Govt. Girls High School Kagdana, Sirsa. All rights reserved.</span>
+    <span>Dept. of School Education, <a href="#">Haryana</a></span>
+  </div>
+</footer>
+
+<script>
+// Default activities
+const defaultActivities = [
+  { id: 1, title: "Annual Sports Day 2024", date: "2024-11-20", category: "Sports", description: "Students showcased their athletic talent in various track and field events. The event was graced by the District Education Officer.", icon: "🏅" },
+  { id: 2, title: "Science Exhibition", date: "2024-10-15", category: "Academic", description: "Class 9 and 10 students presented innovative science projects on topics ranging from renewable energy to environmental conservation.", icon: "🔬" },
+  { id: 3, title: "Independence Day Celebration", date: "2024-08-15", category: "Cultural", description: "A grand celebration with cultural performances, patriotic songs, and speeches by students to commemorate India's Independence Day.", icon: "🇮🇳" }
+];
+
+const defaultNotices = [
+  { id: 1, title: "Half-Yearly Examination Schedule", date: "2024-11-25", category: "exam", desc: "Exams for all classes from 2nd Dec to 15th Dec." },
+  { id: 2, title: "Annual Sports Day", date: "2024-11-20", category: "sports", desc: "Inter-house sports competition on 20th November." },
+  { id: 3, title: "PTM – Parent-Teacher Meeting", date: "2024-11-10", category: "general", desc: "Compulsory attendance for all parents on 10th Nov." },
+  { id: 4, title: "Drawing Competition", date: "2024-10-28", category: "cultural", desc: "District-level drawing competition for classes 6–10." },
+  { id: 5, title: "Result Declaration – Term 1", date: "2024-10-15", category: "academic", desc: "Term 1 results available on the school portal." }
+];
+
+function initData() {
+  if (!localStorage.getItem('gghs_activities')) localStorage.setItem('gghs_activities', JSON.stringify(defaultActivities));
+  if (!localStorage.getItem('gghs_notices')) localStorage.setItem('gghs_notices', JSON.stringify(defaultNotices));
+}
+
+function renderNotices() {
+  const notices = JSON.parse(localStorage.getItem('gghs_notices') || '[]');
+  const container = document.getElementById('notice-list');
+  if (!notices.length) { container.innerHTML = '<div class="empty-notice">No notices at this time.</div>'; return; }
+  container.innerHTML = notices.slice(0, 6).map(n => {
+    const d = new Date(n.date);
+    const day = d.getDate().toString().padStart(2,'0');
+    const mon = d.toLocaleString('en',{month:'short'}).toUpperCase();
+    const badgeClass = `badge-${n.category || 'general'}`;
+    return `<div class="notice-item">
+      <div class="notice-date"><span class="day">${day}</span><span class="mon">${mon}</span></div>
+      <div class="notice-content">
+        <h4>${n.title}</h4>
+        <p>${n.desc || ''}</p>
+        <span class="notice-badge ${badgeClass}">${(n.category||'general').toUpperCase()}</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderActivities() {
+  const acts = JSON.parse(localStorage.getItem('gghs_activities') || '[]');
+  const grid = document.getElementById('activities-grid');
+  if (!acts.length) {
+    grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;color:#7A6358;font-style:italic;">No activities yet. Check back soon!</div>';
+    return;
+  }
+  grid.innerHTML = acts.slice(0, 3).map(a => {
+    const d = new Date(a.date).toLocaleDateString('en-IN', { day:'2-digit', month:'long', year:'numeric' });
+    const icon = a.icon || '🎉';
+    const thumb = a.imageUrl ? `<img src="${a.imageUrl}" alt="${a.title}" onerror="this.style.display='none'">` : `<div class="activity-thumb-icon">${icon}</div>`;
+    return `<div class="activity-card">
+      <div class="activity-thumb">${thumb}<span class="activity-cat-badge">${a.category}</span></div>
+      <div class="activity-body">
+        <div class="date">📅 ${d}</div>
+        <h3>${a.title}</h3>
+        <p>${a.description ? a.description.substring(0,120)+'…' : ''}</p>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+initData(); renderNotices(); renderActivities();
+</script>
+</body>
+</html>

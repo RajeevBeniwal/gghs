@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Student Results — GGHS Sirsa</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Crimson+Pro:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{--maroon:#7B1C1C;--maroon-dark:#4A0E0E;--gold:#C9A84C;--gold-light:#E8C96A;--cream:#FDFAF5;--cream-dark:#F2EDE2;--text:#2C1810;--text-muted:#7A6358;--white:#FFFFFF;--border:#E2D5C3;--green:#1B5E20;--green-light:#E8F5E9;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'Crimson Pro',serif;background:var(--cream);color:var(--text);font-size:17px;line-height:1.7;}
+  nav{background:var(--maroon-dark);padding:0 2rem;position:sticky;top:0;z-index:100;border-bottom:3px solid var(--gold);box-shadow:0 4px 20px rgba(74,14,14,0.4);}
+  .nav-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:64px;}
+  .nav-brand{display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--white);}
+  .nav-logo{width:44px;height:44px;border-radius:50%;background:var(--gold);display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--maroon-dark);}
+  .nav-title{font-family:'Crimson Pro',serif;font-weight:600;font-size:15px;line-height:1.3;}
+  .nav-title span{display:block;font-size:11px;font-weight:300;opacity:0.8;letter-spacing:0.08em;text-transform:uppercase;}
+  .nav-links{display:flex;align-items:center;gap:6px;}
+  .nav-links a{color:rgba(255,255,255,0.85);text-decoration:none;padding:6px 14px;border-radius:4px;font-size:14px;font-weight:500;transition:all 0.2s;}
+  .nav-links a:hover,.nav-links a.active{background:rgba(201,168,76,0.2);color:var(--gold-light);}
+  .nav-links .btn-admin{background:var(--gold);color:var(--maroon-dark);font-weight:600;}
+
+  .page-hero{background:linear-gradient(135deg,var(--maroon-dark),var(--maroon));padding:52px 2rem;text-align:center;border-bottom:4px solid var(--gold);}
+  .page-hero h1{font-family:'Playfair Display',serif;color:var(--white);font-size:2.4rem;margin-bottom:10px;}
+  .page-hero p{color:rgba(255,255,255,0.7);font-size:16px;}
+  .breadcrumb{display:flex;gap:8px;align-items:center;justify-content:center;margin-top:14px;font-size:13px;}
+  .breadcrumb a{color:var(--gold-light);text-decoration:none;}
+  .breadcrumb span{color:rgba(255,255,255,0.4);}
+
+  .search-section{background:var(--cream-dark);padding:52px 2rem;border-bottom:1px solid var(--border);}
+  .search-box{max-width:680px;margin:0 auto;background:var(--white);border-radius:20px;box-shadow:0 8px 40px rgba(0,0,0,0.1);overflow:hidden;border:1px solid var(--border);}
+  .search-header{background:var(--maroon);padding:20px 28px;}
+  .search-header h2{font-family:'Playfair Display',serif;color:var(--white);font-size:1.25rem;margin-bottom:4px;}
+  .search-header p{color:rgba(255,255,255,0.65);font-size:14px;}
+  .search-form{padding:28px;}
+  .form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;}
+  .form-group{display:flex;flex-direction:column;gap:6px;}
+  .form-group label{font-size:13px;font-weight:600;color:var(--text-muted);letter-spacing:0.05em;text-transform:uppercase;}
+  .form-group select,.form-group input{padding:11px 14px;border:1.5px solid var(--border);border-radius:8px;font-size:16px;font-family:'Crimson Pro',serif;color:var(--text);background:var(--cream);transition:border 0.2s;}
+  .form-group select:focus,.form-group input:focus{outline:none;border-color:var(--maroon);}
+  .search-btn{width:100%;padding:14px;background:var(--maroon);color:var(--white);border:none;border-radius:10px;font-size:17px;font-family:'Playfair Display',serif;font-weight:600;cursor:pointer;transition:all 0.2s;margin-top:4px;}
+  .search-btn:hover{background:var(--maroon-dark);transform:translateY(-2px);box-shadow:0 6px 20px rgba(74,14,14,0.3);}
+  .search-note{text-align:center;margin-top:12px;font-size:13px;color:var(--text-muted);font-style:italic;}
+
+  /* RESULT DISPLAY */
+  .result-section{max-width:900px;margin:0 auto;padding:52px 2rem;}
+  .result-card{background:var(--white);border-radius:20px;overflow:hidden;box-shadow:0 8px 40px rgba(0,0,0,0.1);border:1px solid var(--border);display:none;}
+  .result-card.visible{display:block;}
+  
+  .result-top{background:linear-gradient(135deg,var(--maroon-dark),var(--maroon));padding:28px 32px;position:relative;}
+  .school-header{text-align:center;border-bottom:2px solid rgba(201,168,76,0.4);padding-bottom:20px;margin-bottom:20px;}
+  .school-header .logo{width:64px;height:64px;border-radius:50%;background:var(--gold);display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:28px;font-weight:700;color:var(--maroon-dark);margin:0 auto 10px;}
+  .school-header h2{font-family:'Playfair Display',serif;color:var(--white);font-size:1.3rem;}
+  .school-header p{color:rgba(255,255,255,0.65);font-size:13px;}
+  .result-student-info{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;}
+  .info-item{text-align:center;padding:12px;}
+  .info-item .label{font-size:11px;color:rgba(255,255,255,0.6);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:4px;}
+  .info-item .value{font-family:'DM Mono',monospace;font-size:15px;color:var(--white);font-weight:500;}
+
+  .result-body{padding:28px 32px;}
+  .marks-table{width:100%;border-collapse:collapse;margin-bottom:28px;}
+  .marks-table th{background:var(--maroon);color:var(--white);padding:12px 16px;text-align:left;font-size:13px;letter-spacing:0.05em;text-transform:uppercase;font-weight:600;}
+  .marks-table th:last-child,.marks-table td:last-child{text-align:center;}
+  .marks-table td{padding:13px 16px;border-bottom:1px solid var(--border);font-size:15px;}
+  .marks-table tr:last-child td{border-bottom:none;}
+  .marks-table tr:nth-child(even){background:var(--cream);}
+  .marks-bar{height:8px;background:var(--border);border-radius:50px;overflow:hidden;min-width:80px;}
+  .marks-bar-fill{height:100%;background:linear-gradient(90deg,var(--maroon),var(--gold));border-radius:50px;transition:width 0.5s ease;}
+  .subject-marks{font-family:'DM Mono',monospace;font-size:14px;}
+
+  .result-summary{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px;}
+  .summary-card{background:var(--cream-dark);border-radius:12px;padding:18px;text-align:center;border:1px solid var(--border);}
+  .summary-card.highlight{background:var(--maroon-dark);color:var(--white);}
+  .summary-card .s-label{font-size:11px;color:var(--text-muted);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:6px;}
+  .summary-card.highlight .s-label{color:rgba(255,255,255,0.6);}
+  .summary-card .s-value{font-family:'Playfair Display',serif;font-size:1.8rem;color:var(--maroon-dark);font-weight:700;}
+  .summary-card.highlight .s-value{color:var(--gold-light);}
+  
+  .grade-badge{display:inline-block;padding:4px 16px;border-radius:50px;font-weight:700;font-size:14px;letter-spacing:0.06em;}
+  .grade-A{background:var(--green-light);color:var(--green);}
+  .grade-B{background:#E3F2FD;color:#1565C0;}
+  .grade-C{background:#FFF9C4;color:#F57F17;}
+  .grade-D{background:#FBE9E7;color:#BF360C;}
+  .grade-F{background:#FFEBEE;color:#C62828;}
+
+  .result-status{text-align:center;padding:18px;border-radius:12px;margin-bottom:20px;font-size:18px;font-family:'Playfair Display',serif;font-weight:600;}
+  .status-pass{background:var(--green-light);color:var(--green);border:1px solid #A5D6A7;}
+  .status-fail{background:#FFEBEE;color:#C62828;border:1px solid #FFCDD2;}
+
+  .result-footer{display:flex;justify-content:space-between;align-items:center;padding-top:20px;border-top:1px solid var(--border);}
+  .print-btn{padding:10px 24px;background:var(--maroon);color:var(--white);border:none;border-radius:8px;font-size:15px;cursor:pointer;font-family:'Crimson Pro',serif;font-weight:500;}
+
+  .no-result{display:none;text-align:center;padding:52px 20px;}
+  .no-result.visible{display:block;}
+  .no-result .emoji{font-size:52px;display:block;margin-bottom:16px;}
+  .no-result h3{font-family:'Playfair Display',serif;color:var(--maroon-dark);font-size:1.4rem;margin-bottom:8px;}
+  .no-result p{color:var(--text-muted);font-size:16px;}
+
+  .info-box{background:#FFF8E1;border:1px solid #FFD54F;border-radius:12px;padding:20px 24px;margin-bottom:32px;}
+  .info-box h4{color:#E65100;font-size:15px;margin-bottom:8px;}
+  .info-box p{font-size:14px;color:#5D4037;margin:0;}
+
+  footer{background:var(--maroon-dark);color:rgba(255,255,255,0.7);padding:32px 2rem;border-top:4px solid var(--gold);text-align:center;font-size:14px;margin-top:40px;}
+  footer a{color:var(--gold-light);text-decoration:none;}
+
+  @media print{
+    nav,.search-section,.page-hero,.info-box,.print-btn,footer{display:none!important;}
+    .result-card{box-shadow:none!important;border:none!important;}
+    .result-section{padding:0!important;}
+  }
+  @media(max-width:700px){
+    .form-row{grid-template-columns:1fr;}
+    .result-summary{grid-template-columns:1fr 1fr;}
+    .result-student-info{grid-template-columns:1fr 1fr;}
+    .nav-links{display:none;}
+  }
+</style>
+</head>
+<body>
+<nav>
+  <div class="nav-inner">
+    <a href="index.html" class="nav-brand">
+      <div class="nav-logo">गस</div>
+      <div class="nav-title">Govt. Girls High School<span>Sirsa, Haryana</span></div>
+    </a>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="activities.html">Activities</a>
+      <a href="results.html" class="active">Results</a>
+      <a href="about.html">About</a>
+      <a href="admin.html" class="btn-admin">Admin Panel</a>
+    </div>
+  </div>
+</nav>
+
+<div class="page-hero">
+  <h1>📊 Student Results</h1>
+  <p>Check your examination results by entering your class and roll number</p>
+  <div class="breadcrumb">
+    <a href="index.html">Home</a><span>/</span><span style="color:rgba(255,255,255,0.8)">Results</span>
+  </div>
+</div>
+
+<div class="search-section">
+  <div class="search-box">
+    <div class="search-header">
+      <h2>🔍 Search Your Result</h2>
+      <p>Enter your details below to view your examination result</p>
+    </div>
+    <div class="search-form">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Select Class</label>
+          <select id="sel-class">
+            <option value="">-- Choose Class --</option>
+            <option value="6">Class 6</option>
+            <option value="7">Class 7</option>
+            <option value="8">Class 8</option>
+            <option value="9">Class 9</option>
+            <option value="10">Class 10</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Exam Term</label>
+          <select id="sel-term">
+            <option value="">-- Choose Term --</option>
+            <option value="term1">Term 1 (Half-Yearly)</option>
+            <option value="term2">Term 2 (Annual)</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Roll Number</label>
+          <input type="text" id="inp-roll" placeholder="e.g. 001" maxlength="10">
+        </div>
+        <div class="form-group">
+          <label>Student Name (optional)</label>
+          <input type="text" id="inp-name" placeholder="e.g. Priya Sharma">
+        </div>
+      </div>
+      <button class="search-btn" onclick="searchResult()">Search Result</button>
+      <p class="search-note">💡 Demo: Try Class 6, Term 1, Roll No. 001 to 005</p>
+    </div>
+  </div>
+</div>
+
+<div class="result-section">
+  <div class="info-box">
+    <h4>ℹ️ How to Check Results</h4>
+    <p>Select your class and exam term, then enter your roll number. Results are available once published by the school administration. For any discrepancy, contact the school office.</p>
+  </div>
+
+  <div class="no-result" id="no-result">
+    <span class="emoji">🔍</span>
+    <h3>No Result Found</h3>
+    <p>No result was found for the given details. Please check your roll number and class, or contact the school office.</p>
+  </div>
+
+  <div class="result-card" id="result-card">
+    <div class="result-top">
+      <div class="school-header">
+        <div class="logo">गस</div>
+        <h2>Govt. Girls High School Kagdana, Sirsa</h2>
+        <p>Sirsa, Haryana — Dept. of School Education, Haryana</p>
+      </div>
+      <div class="result-student-info">
+        <div class="info-item"><div class="label">Student Name</div><div class="value" id="r-name">—</div></div>
+        <div class="info-item"><div class="label">Roll Number</div><div class="value" id="r-roll">—</div></div>
+        <div class="info-item"><div class="label">Class</div><div class="value" id="r-class">—</div></div>
+        <div class="info-item"><div class="label">Section</div><div class="value" id="r-section">—</div></div>
+        <div class="info-item"><div class="label">Exam</div><div class="value" id="r-term">—</div></div>
+        <div class="info-item"><div class="label">Session</div><div class="value" id="r-session">2024–25</div></div>
+      </div>
+    </div>
+    <div class="result-body">
+      <div class="result-status" id="r-status">PASS</div>
+      <div class="result-summary">
+        <div class="summary-card"><div class="s-label">Total Marks</div><div class="s-value" id="r-total">—</div></div>
+        <div class="summary-card"><div class="s-label">Max Marks</div><div class="s-value" id="r-max">—</div></div>
+        <div class="summary-card"><div class="s-label">Percentage</div><div class="s-value" id="r-percent">—</div></div>
+        <div class="summary-card highlight"><div class="s-label">Grade</div><div class="s-value" id="r-grade">—</div></div>
+      </div>
+      <table class="marks-table" id="marks-table">
+        <thead>
+          <tr><th>Subject</th><th>Max</th><th>Obtained</th><th>Grade</th><th style="width:120px">Performance</th></tr>
+        </thead>
+        <tbody id="marks-body"></tbody>
+      </table>
+      <div class="result-footer">
+        <div style="font-size:13px;color:var(--text-muted);">Result declared by school administration. For queries, contact office.</div>
+        <button class="print-btn" onclick="window.print()">🖨️ Print Result</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  © 2025 Govt. Girls High School Kagdana, Sirsa &nbsp;·&nbsp; <a href="index.html">Home</a> &nbsp;·&nbsp; <a href="admin.html">Admin Panel</a>
+</footer>
+
+<script>
+// Default sample results
+const defaultResults = {
+  "6_term1": [
+    {rollNo:"001",name:"Priya Sharma",section:"A",marks:{Hindi:85,English:78,Mathematics:92,Science:88,"Social Studies":80},max:100},
+    {rollNo:"002",name:"Anjali Devi",section:"A",marks:{Hindi:72,English:68,Mathematics:75,Science:70,"Social Studies":73},max:100},
+    {rollNo:"003",name:"Sunita Rani",section:"A",marks:{Hindi:90,English:85,Mathematics:95,Science:91,"Social Studies":88},max:100},
+    {rollNo:"004",name:"Kavita Kumari",section:"B",marks:{Hindi:55,English:48,Mathematics:52,Science:50,"Social Studies":55},max:100},
+    {rollNo:"005",name:"Meena Devi",section:"B",marks:{Hindi:82,English:75,Mathematics:88,Science:79,"Social Studies":83},max:100}
+  ],
+  "7_term1":[
+    {rollNo:"001",name:"Pooja Singh",section:"A",marks:{Hindi:79,English:82,Mathematics:85,Science:77,"Social Studies":80,"Sanskrit":74},max:100},
+    {rollNo:"002",name:"Rekha Bai",section:"A",marks:{Hindi:65,English:58,Mathematics:70,Science:63,"Social Studies":67,"Sanskrit":60},max:100}
+  ],
+  "8_term1":[
+    {rollNo:"001",name:"Geeta Rani",section:"A",marks:{Hindi:88,English:80,Mathematics:91,Science:85,"Social Studies":82,"Sanskrit":78},max:100},
+    {rollNo:"002",name:"Savita Devi",section:"A",marks:{Hindi:70,English:65,Mathematics:68,Science:72,"Social Studies":69,"Sanskrit":63},max:100}
+  ]
+};
+
+if(!localStorage.getItem('gghs_results')) localStorage.setItem('gghs_results',JSON.stringify(defaultResults));
+
+function getGrade(pct){
+  if(pct>=90)return'A+';if(pct>=80)return'A';if(pct>=70)return'B+';if(pct>=60)return'B';
+  if(pct>=50)return'C';if(pct>=33)return'D';return'F';
+}
+function getGradeClass(g){
+  if(g==='A+'||g==='A')return'grade-A';if(g==='B+'||g==='B')return'grade-B';
+  if(g==='C')return'grade-C';if(g==='D')return'grade-D';return'grade-F';
+}
+
+function searchResult(){
+  const cls = document.getElementById('sel-class').value;
+  const term = document.getElementById('sel-term').value;
+  const roll = document.getElementById('inp-roll').value.trim().padStart(3,'0');
+  const name = document.getElementById('inp-name').value.trim().toLowerCase();
+
+  document.getElementById('result-card').classList.remove('visible');
+  document.getElementById('no-result').classList.remove('visible');
+
+  if(!cls||!term){alert('Please select a class and exam term.');return;}
+  if(!roll&&!name){alert('Please enter a roll number or student name.');return;}
+
+  const allResults = JSON.parse(localStorage.getItem('gghs_results')||'{}');
+  const key = `${cls}_${term}`;
+  const classResults = allResults[key]||[];
+
+  let student = null;
+  if(roll) student = classResults.find(s=>s.rollNo===roll);
+  if(!student && name) student = classResults.find(s=>s.name.toLowerCase().includes(name));
+
+  if(!student){document.getElementById('no-result').classList.add('visible');return;}
+
+  const subjects = Object.keys(student.marks);
+  const maxPerSubject = student.max||100;
+  const totalMax = subjects.length*maxPerSubject;
+  const totalObtained = Object.values(student.marks).reduce((a,b)=>a+b,0);
+  const pct = (totalObtained/totalMax*100).toFixed(1);
+  const grade = getGrade(parseFloat(pct));
+  const passed = parseFloat(pct)>=33 && Object.values(student.marks).every(m=>m>=(maxPerSubject*0.33));
+
+  document.getElementById('r-name').textContent = student.name;
+  document.getElementById('r-roll').textContent = student.rollNo;
+  document.getElementById('r-class').textContent = `Class ${cls}`;
+  document.getElementById('r-section').textContent = student.section||'—';
+  document.getElementById('r-term').textContent = term==='term1'?'Term 1 (Half-Yearly)':'Term 2 (Annual)';
+  document.getElementById('r-total').textContent = totalObtained;
+  document.getElementById('r-max').textContent = totalMax;
+  document.getElementById('r-percent').textContent = pct+'%';
+  document.getElementById('r-grade').textContent = grade;
+  document.getElementById('r-status').textContent = passed?'✅ PASSED':'❌ FAILED';
+  document.getElementById('r-status').className = 'result-status '+(passed?'status-pass':'status-fail');
+
+  const tbody = document.getElementById('marks-body');
+  tbody.innerHTML = subjects.map(sub=>{
+    const obtained = student.marks[sub];
+    const subPct = (obtained/maxPerSubject*100);
+    const subGrade = getGrade(subPct);
+    const barWidth = Math.min(100,subPct).toFixed(0);
+    return `<tr>
+      <td>${sub}</td>
+      <td style="font-family:'DM Mono',monospace">${maxPerSubject}</td>
+      <td><span class="subject-marks">${obtained}</span></td>
+      <td><span class="grade-badge ${getGradeClass(subGrade)}">${subGrade}</span></td>
+      <td><div class="marks-bar"><div class="marks-bar-fill" style="width:${barWidth}%"></div></div></td>
+    </tr>`;
+  }).join('');
+
+  document.getElementById('result-card').classList.add('visible');
+  document.getElementById('result-card').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+document.getElementById('inp-roll').addEventListener('keypress',e=>{if(e.key==='Enter')searchResult();});
+document.getElementById('inp-name').addEventListener('keypress',e=>{if(e.key==='Enter')searchResult();});
+</script>
+</body>
+</html>

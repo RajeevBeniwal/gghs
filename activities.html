@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Activities & News — GGHS Sirsa</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Crimson+Pro:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --maroon:#7B1C1C;--maroon-dark:#4A0E0E;--maroon-light:#A02828;
+    --gold:#C9A84C;--gold-light:#E8C96A;--cream:#FDFAF5;--cream-dark:#F2EDE2;
+    --text:#2C1810;--text-muted:#7A6358;--white:#FFFFFF;--border:#E2D5C3;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'Crimson Pro',serif;background:var(--cream);color:var(--text);font-size:17px;line-height:1.7;}
+  nav{background:var(--maroon-dark);padding:0 2rem;position:sticky;top:0;z-index:100;border-bottom:3px solid var(--gold);box-shadow:0 4px 20px rgba(74,14,14,0.4);}
+  .nav-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:64px;}
+  .nav-brand{display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--white);}
+  .nav-logo{width:44px;height:44px;border-radius:50%;background:var(--gold);display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--maroon-dark);}
+  .nav-title{font-family:'Crimson Pro',serif;font-weight:600;font-size:15px;line-height:1.3;}
+  .nav-title span{display:block;font-size:11px;font-weight:300;opacity:0.8;letter-spacing:0.08em;text-transform:uppercase;}
+  .nav-links{display:flex;align-items:center;gap:6px;}
+  .nav-links a{color:rgba(255,255,255,0.85);text-decoration:none;padding:6px 14px;border-radius:4px;font-size:14px;font-weight:500;transition:all 0.2s;letter-spacing:0.03em;}
+  .nav-links a:hover,.nav-links a.active{background:rgba(201,168,76,0.2);color:var(--gold-light);}
+  .nav-links .btn-admin{background:var(--gold);color:var(--maroon-dark);font-weight:600;}
+  .nav-links .btn-admin:hover{background:var(--gold-light);}
+
+  .page-hero{background:linear-gradient(135deg,var(--maroon-dark),var(--maroon));padding:52px 2rem;text-align:center;border-bottom:4px solid var(--gold);}
+  .page-hero h1{font-family:'Playfair Display',serif;color:var(--white);font-size:2.4rem;margin-bottom:10px;}
+  .page-hero p{color:rgba(255,255,255,0.7);font-size:16px;}
+  .breadcrumb{display:flex;gap:8px;align-items:center;justify-content:center;margin-top:14px;font-size:13px;}
+  .breadcrumb a{color:var(--gold-light);text-decoration:none;}
+  .breadcrumb span{color:rgba(255,255,255,0.4);}
+
+  .content{max-width:1200px;margin:0 auto;padding:52px 2rem;}
+  .filters{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:36px;align-items:center;}
+  .filter-label{font-size:13px;color:var(--text-muted);font-weight:500;margin-right:4px;}
+  .filter-btn{padding:7px 18px;border-radius:50px;border:1.5px solid var(--border);background:transparent;color:var(--text-muted);font-size:13px;font-weight:500;cursor:pointer;transition:all 0.2s;font-family:'Crimson Pro',serif;}
+  .filter-btn:hover,.filter-btn.active{background:var(--maroon);border-color:var(--maroon);color:var(--white);}
+
+  .activities-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:28px;}
+  .activity-card{background:var(--white);border-radius:16px;overflow:hidden;border:1px solid var(--border);box-shadow:0 4px 16px rgba(0,0,0,0.06);transition:transform 0.25s,box-shadow 0.25s;}
+  .activity-card:hover{transform:translateY(-5px);box-shadow:0 12px 36px rgba(0,0,0,0.12);}
+  .activity-thumb{height:200px;overflow:hidden;position:relative;background:linear-gradient(135deg,var(--maroon) 0%,#9B3030 100%);display:flex;align-items:center;justify-content:center;}
+  .activity-thumb img{width:100%;height:100%;object-fit:cover;}
+  .activity-thumb-icon{font-size:64px;opacity:0.5;}
+  .act-cat-badge{position:absolute;top:14px;left:14px;background:var(--gold);color:var(--maroon-dark);padding:3px 12px;border-radius:50px;font-size:11px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;}
+  .activity-body{padding:22px;}
+  .activity-body .meta{display:flex;gap:14px;font-size:12px;color:var(--text-muted);font-family:'DM Mono',monospace;margin-bottom:10px;}
+  .activity-body h3{font-family:'Playfair Display',serif;font-size:1.15rem;margin-bottom:10px;color:var(--maroon-dark);}
+  .activity-body p{font-size:15px;color:var(--text-muted);line-height:1.55;}
+  .read-more{display:inline-block;margin-top:14px;color:var(--maroon);font-size:14px;font-weight:600;cursor:pointer;}
+
+  .empty-state{grid-column:1/-1;text-align:center;padding:80px 20px;color:var(--text-muted);}
+  .empty-state .emoji{font-size:48px;display:block;margin-bottom:16px;}
+  .empty-state p{font-size:17px;font-style:italic;}
+
+  .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:200;align-items:center;justify-content:center;padding:20px;}
+  .modal-overlay.open{display:flex;}
+  .modal{background:var(--white);border-radius:16px;max-width:600px;width:100%;max-height:85vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.3);}
+  .modal-header{background:var(--maroon);padding:20px 24px;display:flex;justify-content:space-between;align-items:flex-start;}
+  .modal-header h2{font-family:'Playfair Display',serif;color:var(--white);font-size:1.3rem;padding-right:16px;}
+  .modal-close{color:rgba(255,255,255,0.7);background:none;border:none;font-size:24px;cursor:pointer;line-height:1;}
+  .modal-body{padding:24px;}
+  .modal-meta{display:flex;gap:16px;font-size:13px;color:var(--text-muted);font-family:'DM Mono',monospace;margin-bottom:16px;flex-wrap:wrap;}
+  .modal-img{width:100%;border-radius:10px;margin-bottom:16px;max-height:250px;object-fit:cover;}
+  .modal-body p{font-size:16px;color:var(--text);line-height:1.7;}
+
+  footer{background:var(--maroon-dark);color:rgba(255,255,255,0.7);padding:32px 2rem;border-top:4px solid var(--gold);text-align:center;font-size:14px;}
+  footer a{color:var(--gold-light);text-decoration:none;}
+
+  @media(max-width:900px){.activities-grid{grid-template-columns:1fr 1fr;}.nav-links{display:none;}}
+  @media(max-width:600px){.activities-grid{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<nav>
+  <div class="nav-inner">
+    <a href="index.html" class="nav-brand">
+      <div class="nav-logo">गस</div>
+      <div class="nav-title">Govt. Girls High School<span>Sirsa, Haryana</span></div>
+    </a>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="activities.html" class="active">Activities</a>
+      <a href="results.html">Results</a>
+      <a href="about.html">About</a>
+      <a href="admin.html" class="btn-admin">Admin Panel</a>
+    </div>
+  </div>
+</nav>
+
+<div class="page-hero">
+  <h1>Activities & News</h1>
+  <p>Stay updated with the latest events, achievements, and announcements</p>
+  <div class="breadcrumb">
+    <a href="index.html">Home</a><span>/</span><span style="color:rgba(255,255,255,0.8)">Activities</span>
+  </div>
+</div>
+
+<div class="content">
+  <div class="filters">
+    <span class="filter-label">Filter by:</span>
+    <button class="filter-btn active" data-cat="all">All</button>
+    <button class="filter-btn" data-cat="Sports">Sports</button>
+    <button class="filter-btn" data-cat="Academic">Academic</button>
+    <button class="filter-btn" data-cat="Cultural">Cultural</button>
+    <button class="filter-btn" data-cat="Exam">Exam</button>
+    <button class="filter-btn" data-cat="General">General</button>
+  </div>
+  <div class="activities-grid" id="activities-grid"></div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 id="modal-title">Activity Title</h2>
+      <button class="modal-close" onclick="closeModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-meta" id="modal-meta"></div>
+      <img id="modal-img" class="modal-img" src="" alt="" style="display:none">
+      <p id="modal-desc"></p>
+    </div>
+  </div>
+</div>
+
+<footer>
+  © 2025 Govt. Girls High School Kagdana, Sirsa &nbsp;·&nbsp; <a href="index.html">Home</a> &nbsp;·&nbsp; <a href="admin.html">Admin Panel</a>
+</footer>
+
+<script>
+const defaultActivities = [
+  {id:1,title:"Annual Sports Day 2024",date:"2024-11-20",category:"Sports",description:"Students showcased their athletic talent in various track and field events. The event was graced by the District Education Officer and featured 15 events including 100m sprint, long jump, shot put, and relay races. Our school won the overall trophy for the third consecutive year.",icon:"🏅"},
+  {id:2,title:"Science Exhibition 2024",date:"2024-10-15",category:"Academic",description:"Class 9 and 10 students presented innovative science projects on topics ranging from renewable energy to environmental conservation. The exhibition was inaugurated by the Principal and saw participation from over 80 students across 35 project displays.",icon:"🔬"},
+  {id:3,title:"Independence Day Celebration",date:"2024-08-15",category:"Cultural",description:"A grand celebration with cultural performances, patriotic songs, and speeches by students to commemorate India's 78th Independence Day. The event included a march-past, flag hoisting ceremony, and distribution of sweets to all students.",icon:"🇮🇳"},
+  {id:4,title:"Drawing & Painting Competition",date:"2024-09-05",category:"Cultural",description:"District-level drawing competition organized on the theme 'Save Environment'. Over 200 students from 12 schools participated. Our school students won 3 gold medals and 2 silver medals.",icon:"🎨"},
+  {id:5,title:"Half-Yearly Exam Results",date:"2024-10-20",category:"Exam",description:"Half-yearly examination results for all classes (6–10) have been declared. Students can check their individual results on the Results page. The overall school performance has shown a 5% improvement compared to last year.",icon:"📊"},
+  {id:6,title:"Inter-School Debate Competition",date:"2024-09-25",category:"Academic",description:"Our school hosted the annual inter-school debate competition on the topic 'Women's Education: The Key to National Development'. Students from 8 schools participated and our team won the Best Debate Award.",icon:"🎤"}
+];
+
+if(!localStorage.getItem('gghs_activities')) localStorage.setItem('gghs_activities',JSON.stringify(defaultActivities));
+
+let activeFilter = 'all';
+let allActivities = [];
+
+function loadActivities(){
+  allActivities = JSON.parse(localStorage.getItem('gghs_activities')||'[]');
+  renderGrid();
+}
+
+function renderGrid(){
+  const filtered = activeFilter==='all' ? allActivities : allActivities.filter(a=>a.category===activeFilter);
+  const grid = document.getElementById('activities-grid');
+  if(!filtered.length){
+    grid.innerHTML='<div class="empty-state"><span class="emoji">📭</span><p>No activities found in this category.</p></div>';
+    return;
+  }
+  grid.innerHTML = filtered.map(a=>{
+    const d = new Date(a.date).toLocaleDateString('en-IN',{day:'2-digit',month:'long',year:'numeric'});
+    const icon = a.icon||'🎉';
+    const thumb = a.imageUrl?`<img src="${a.imageUrl}" alt="${a.title}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`:'';
+    return `<div class="activity-card">
+      <div class="activity-thumb">${thumb}<div class="activity-thumb-icon" ${a.imageUrl?'style="display:none"':''}>${icon}</div><span class="act-cat-badge">${a.category}</span></div>
+      <div class="activity-body">
+        <div class="meta"><span>📅 ${d}</span></div>
+        <h3>${a.title}</h3>
+        <p>${a.description?a.description.substring(0,110)+'…':''}</p>
+        <span class="read-more" onclick="openModal(${a.id})">Read more →</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function openModal(id){
+  const a = allActivities.find(x=>x.id===id); if(!a)return;
+  const d = new Date(a.date).toLocaleDateString('en-IN',{day:'2-digit',month:'long',year:'numeric'});
+  document.getElementById('modal-title').textContent = a.title;
+  document.getElementById('modal-meta').innerHTML = `<span>📅 ${d}</span><span>🏷️ ${a.category}</span>`;
+  const img = document.getElementById('modal-img');
+  if(a.imageUrl){img.src=a.imageUrl;img.style.display='block';}else{img.style.display='none';}
+  document.getElementById('modal-desc').textContent = a.description||'';
+  document.getElementById('modal').classList.add('open');
+}
+function closeModal(){document.getElementById('modal').classList.remove('open');}
+
+document.querySelectorAll('.filter-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    activeFilter = btn.dataset.cat;
+    renderGrid();
+  });
+});
+
+document.getElementById('modal').addEventListener('click',e=>{if(e.target===document.getElementById('modal'))closeModal();});
+loadActivities();
+</script>
+</body>
+</html>
