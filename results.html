@@ -320,62 +320,6 @@ function closeResult() {
   document.getElementById('searchMsg').innerHTML = '';
 }
 
-// ── CLASS-WISE ──
-let cwClass = 'All';
-function initCW() {
-  const classes = ['All', ...new Set(results.map(r => r.class).filter(Boolean)).values()].sort((a,b) => a==='All'?-1:Number(a)-Number(b));
-  const chips = document.getElementById('clsChips');
-  chips.innerHTML = classes.map(c => `<button class="cls-chip ${c===cwClass?'active':''}" data-c="${c}" onclick="setCW('${c}')">${c==='All'?'All Classes':'Class '+c}</button>`).join('');
-  renderCW();
-}
-
-function setCW(c) {
-  cwClass = c;
-  document.querySelectorAll('.cls-chip').forEach(b => b.classList.toggle('active', b.dataset.c === c));
-  renderCW();
-}
-
-function renderCW() {
-  const q = (document.getElementById('cwSearch') || { value: '' }).value.toLowerCase();
-  let data = cwClass === 'All' ? results : results.filter(r => String(r.class) === cwClass);
-  if (q) data = data.filter(r => r.name.toLowerCase().includes(q) || String(r.rollNo).includes(q) || String(r.srn || '').toLowerCase().includes(q));
-
-  const el = document.getElementById('cwTable');
-  if (!data.length) { el.innerHTML = '<div class="alert alert-info">No records found.</div>'; return; }
-
-  el.innerHTML = `
-    <div class="tbl-wrap">
-      <table>
-        <thead><tr>
-          <th>Roll No</th><th>SRN</th><th>Student Name</th><th>Father</th><th>Mother</th><th>Class</th><th>Year</th><th>Total</th><th>%</th><th>Grade</th><th>Result</th><th>Action</th>
-        </tr></thead>
-        <tbody>
-          ${data.map(s => {
-            let mx = 0, ob = 0;
-            Object.values(s.subjects || {}).forEach(v => { mx += Number(v.max || 0); ob += Number(v.obt || 0); });
-            const pc = mx ? ((ob / mx) * 100) : 0;
-            const g = getGrade(pc);
-            const p = pc >= 33;
-            return `<tr>
-              <td><strong>${s.rollNo}</strong></td>
-              <td>${s.srn || '—'}</td>
-              <td style="font-weight:600">${s.name}</td>
-              <td>${s.fatherName || '—'}</td>
-              <td>${s.motherName || '—'}</td>
-              <td>${s.class}${s.section ? ' ('+s.section+')' : ''}</td>
-              <td>${s.year || '—'}</td>
-              <td style="font-weight:700">${ob}/${mx}</td>
-              <td style="font-weight:700">${pc.toFixed(1)}%</td>
-              <td><span class="grade ${gradeClass(g)}">${g}</span></td>
-              <td style="font-weight:700;color:${p?'#117a45':'#7a0f0f'}">${p?'✅ Pass':'❌ Fail'}</td>
-              <td><button class="btn btn-teal btn-sm" onclick="viewCard('${s.rollNo}')">View</button></td>
-            </tr>`;
-          }).join('')}
-        </tbody>
-      </table>
-    </div>
-    <div style="margin-top:8px;font-size:.75rem;color:var(--muted)">${data.length} student(s)</div>`;
-}
 
 function viewCard(roll) {
   document.querySelectorAll('.tab-btn')[0].click();
