@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0"/>
+  <title>Admin Panel – GGHS Kagdana</title>
+  <link rel="stylesheet" href="style.css"/>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <style>
+    body{background:#f0f2f5}
+    .publish-banner{background:linear-gradient(135deg,#c8960c,#e8b84b);border-radius:var(--rad);padding:20px 24px;margin-bottom:24px;display:flex;align-items:center;gap:20px;flex-wrap:wrap}
+    .publish-banner .pb-icon{font-size:2.2rem;flex-shrink:0}
+    .publish-banner .pb-text h3{font-family:'Playfair Display',serif;font-size:1.1rem;color:#fff;margin-bottom:4px}
+    .publish-banner .pb-text p{font-size:.78rem;color:rgba(255,255,255,.85);line-height:1.5}
+    .publish-banner .pb-actions{margin-left:auto;display:flex;gap:10px;flex-wrap:wrap}
+    .pub-btn{background:#fff;color:#8a6508;border:none;padding:10px 22px;border-radius:var(--rad-sm);font-size:.82rem;font-weight:800;cursor:pointer;font-family:'Poppins',sans-serif;display:inline-flex;align-items:center;gap:7px;transition:all var(--ease)}
+    .pub-btn:hover{background:#fffbf0;box-shadow:0 4px 14px rgba(0,0,0,.15)}
+    .steps-card{background:#fff;border-radius:var(--rad);padding:20px 24px;margin-bottom:20px;border-left:4px solid var(--gold)}
+    .steps-card h4{font-size:.88rem;font-weight:800;color:var(--teal);margin-bottom:10px}
+    .steps-list{list-style:none;counter-reset:step}
+    .steps-list li{counter-increment:step;display:flex;gap:10px;align-items:flex-start;font-size:.8rem;color:var(--ink-lt);margin-bottom:8px;line-height:1.5}
+    .steps-list li::before{content:counter(step);background:var(--teal);color:#fff;width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:800;flex-shrink:0;margin-top:1px}
+    code{background:#f0f0f0;padding:1px 6px;border-radius:4px;font-size:.78rem;font-family:monospace}
+    .col-map{display:grid;grid-template-columns:1fr 1fr;gap:12px;background:var(--gold-xpale);padding:16px;border-radius:var(--rad-sm);margin:14px 0;border:1px solid rgba(200,150,12,.2)}
+    .preview-wrap{max-height:380px;overflow:auto;border-radius:var(--rad-sm);border:1px solid var(--border)}
+    .preview-wrap table thead{position:sticky;top:0}
+    .tmpl-btn{background:var(--gold);color:#fff;border:none;padding:9px 20px;border-radius:var(--rad-sm);font-size:.78rem;font-weight:700;cursor:pointer;font-family:'Poppins',sans-serif;display:inline-flex;align-items:center;gap:7px;transition:all var(--ease)}
+    .tmpl-btn:hover{background:#a67a08}
+    .info-pill{background:var(--info-bg);color:var(--info-fg);border:1px solid rgba(13,79,92,.15);border-radius:var(--rad-sm);padding:10px 14px;font-size:.8rem;line-height:1.5}
+    .source-badge{font-size:.72rem;font-weight:700;padding:3px 10px;border-radius:99px;margin-left:8px}
+    .src-remote{background:#e8f8ee;color:#145a32}
+    .src-local{background:#fef9e7;color:#7d6608}
+    .src-fallback{background:#fde8e8;color:#7a0f0f}
+    @media(max-width:768px){.col-map{grid-template-columns:1fr}.publish-banner{flex-direction:column}.pb-actions{margin-left:0}}
+  </style>
+</head>
+<body>
+
+<!-- ══ LOGIN ══ -->
+<div id="loginScreen" style="min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(140deg,var(--teal-dk),var(--teal),var(--teal-lt));padding:24px">
+  <div style="background:#fff;border-radius:var(--rad-lg);box-shadow:var(--shadow-lg);padding:44px;width:100%;max-width:400px">
+    <div style="text-align:center;margin-bottom:28px">
+      <div style="font-size:3.5rem;margin-bottom:12px">🔐</div>
+      <div style="font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:800;color:var(--teal);margin-bottom:4px">Admin Portal</div>
+      <div style="font-size:.8rem;color:var(--muted)">Govt. Girls High School Kagdana, Sirsa</div>
+    </div>
+    <div id="loginErr"></div>
+    <div class="form-group"><label>Username</label><input type="text" class="form-control" id="lUser" value="admin"/></div>
+    <div class="form-group"><label>Password</label><input type="password" class="form-control" id="lPass" placeholder="Enter password"/><div class="form-hint">Default: <strong>admin@gghs123</strong></div></div>
+    <button class="btn btn-teal btn-block" style="margin-top:8px" onclick="doLogin()">🔓 Login to Admin Panel</button>
+    <div style="margin-top:18px;text-align:center"><a href="index.html" style="color:var(--muted);font-size:.8rem;text-decoration:none">← Back to Website</a></div>
+  </div>
+</div>
+
+<!-- ══ ADMIN PANEL ══ -->
+<div id="adminPanel" class="hidden">
+<div class="admin-wrap">
+
+  <aside class="admin-sidebar">
+    <div class="sb-brand"><div class="sb-brand-icon">🏫</div><div><div class="sb-brand-name">GGHS Kagdana</div><div class="sb-brand-sub">Admin Dashboard</div></div></div>
+    <nav class="sb-nav" id="sbNav">
+      <div class="sb-section-label">Main</div>
+      <div class="sb-item active" data-p="dashboard"><span class="sb-icon">📊</span> Dashboard</div>
+      <div class="sb-divider"></div>
+      <div class="sb-section-label">Manage</div>
+      <div class="sb-item" data-p="results"><span class="sb-icon">📋</span> Results</div>
+      <div class="sb-item" data-p="activities"><span class="sb-icon">📸</span> Activities</div>
+      <div class="sb-item" data-p="teachers"><span class="sb-icon">👩‍🏫</span> Teachers</div>
+      <div class="sb-divider"></div>
+      <div class="sb-section-label">Publish</div>
+      <div class="sb-item" data-p="publish"><span class="sb-icon">🚀</span> Publish Data</div>
+      <div class="sb-item" data-p="settings"><span class="sb-icon">⚙️</span> Settings</div>
+    </nav>
+    <div class="sb-footer"><button class="btn btn-outline btn-sm btn-block" style="color:rgba(255,255,255,.6);border-color:rgba(255,255,255,.2);font-size:.75rem" onclick="doLogout()">🚪 Logout</button></div>
+  </aside>
+
+  <div class="admin-main">
+    <div class="admin-topbar">
+      <h1 id="panelTitle">📊 Dashboard</h1>
+      <div style="display:flex;align-items:center;gap:14px;font-size:.8rem;color:var(--muted)">
+        <span id="srcBadge"></span>
+        <a href="index.html" style="color:var(--teal);text-decoration:none;font-weight:600">🌐 Website</a>
+      </div>
+    </div>
+    <div class="admin-content">
+
+      <!-- ══ DASHBOARD ══ -->
+      <div class="panel active" id="panel-dashboard">
+        <!-- Publish reminder banner -->
+        <div class="publish-banner">
+          <div class="pb-icon">🚀</div>
+          <div class="pb-text">
+            <h3>Remember to Publish After Every Change!</h3>
+            <p>After adding results, teachers or activities → click <strong>Publish Data</strong> to download <code>data.json</code> and upload it to your GitHub repo. That's how your changes appear for everyone.</p>
+          </div>
+          <div class="pb-actions"><button class="pub-btn" onclick="switchPanel('publish')">🚀 Go to Publish →</button></div>
+        </div>
+        <div class="dash-stat-grid" id="dashStats"></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px" id="dashGrid">
+          <div class="a-card"><h3>🚀 Quick Actions</h3>
+            <div style="display:flex;flex-direction:column;gap:10px">
+              <button class="btn btn-teal" onclick="switchPanel('results')">📤 Upload / Manage Results</button>
+              <button class="btn btn-gold" onclick="switchPanel('activities')">➕ Post New Activity</button>
+              <button class="btn btn-outline" onclick="switchPanel('teachers')">👩‍🏫 Add Teacher Profile</button>
+              <button class="pub-btn" style="background:var(--gold);color:#fff;justify-content:center" onclick="switchPanel('publish')">🚀 Publish Data to Website</button>
+            </div>
+          </div>
+          <div class="a-card"><h3>📢 Recent Activities</h3><div id="dashActs"></div></div>
+        </div>
+      </div>
+
+      <!-- ══ RESULTS ══ -->
+      <div class="panel" id="panel-results">
+        <div class="a-card">
+          <h3>📤 Upload Results from Excel</h3>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px">
+            <button class="tmpl-btn" onclick="downloadTemplate()">📥 Download Excel Template</button>
+            <button class="btn btn-outline btn-sm" onclick="document.getElementById('fmtGuide').classList.toggle('hidden')">📖 Column Guide</button>
+          </div>
+          <div id="fmtGuide" class="hidden">
+            <div class="info-pill" style="margin-bottom:16px">
+              <strong style="display:block;margin-bottom:8px;color:var(--teal)">Required Excel Columns:</strong>
+              <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:5px;font-size:.78rem">
+                <div><code>RollNo</code> – Roll number</div><div><code>SRN</code> – Registration No.</div>
+                <div><code>Name</code> – Full student name</div><div><code>FatherName</code> – Father's name</div>
+                <div><code>MotherName</code> – Mother's name</div><div><code>DOB</code> – DD/MM/YYYY</div>
+                <div><code>Class</code> – 6 / 7 / 8 / 9 / 10</div><div><code>Section</code> – A/B (optional)</div>
+                <div><code>Year</code> – e.g. 2024</div><div><code>English_Max</code>, <code>English_Obt</code></div>
+                <div><code>Hindi_Max</code>, <code>Hindi_Obt</code></div><div><code>Maths_Max</code>, <code>Maths_Obt</code></div>
+                <div><code>Science_Max</code>, <code>Science_Obt</code></div><div><code>Social_Max</code>, <code>Social_Obt</code></div>
+                <div><code>Sanskrit_Max</code>, <code>Sanskrit_Obt</code></div><div><code>Drawing_Max</code>, <code>Drawing_Obt</code></div>
+                <div><code>Position</code> – rank (optional)</div><div><code>Remarks</code> – optional</div>
+              </div>
+              <p style="margin-top:8px;color:var(--teal);font-size:.78rem"><strong>Tip:</strong> Any subject: <code>SubjectName_Max</code> + <code>SubjectName_Obt</code></p>
+            </div>
+          </div>
+          <div class="upload-zone" id="uploadZone" onclick="document.getElementById('xlFile').click()" ondragover="event.preventDefault();this.classList.add('over')" ondragleave="this.classList.remove('over')" ondrop="handleDrop(event)">
+            <div class="uz-icon">📊</div><h3>Click or Drag Excel File Here</h3><p>.xlsx / .xls supported</p>
+            <input type="file" id="xlFile" accept=".xlsx,.xls" class="hidden" onchange="handleFile(event)"/>
+          </div>
+          <div id="uploadMsg" class="mt-sm"></div>
+          <div id="previewSec" class="hidden" style="margin-top:20px">
+            <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:12px">
+              <div style="font-family:'Playfair Display',serif;font-size:1.1rem;color:var(--teal)">Preview – <span id="prevCount">0</span> students</div>
+              <div style="display:flex;gap:10px;flex-wrap:wrap">
+                <button class="btn btn-outline btn-sm" onclick="clearPreview()">✕ Clear</button>
+                <button class="btn btn-teal" onclick="saveResults()">💾 Save Results</button>
+              </div>
+            </div>
+            <div class="preview-wrap"><table><thead><tr id="prevHead"></tr></thead><tbody id="prevBody"></tbody></table></div>
+          </div>
+        </div>
+        <div class="a-card">
+          <h3>🗃️ Manage Result Records</h3>
+          <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:14px;align-items:center">
+            <input type="text" class="form-control" id="rSearch" placeholder="Search name, roll, SRN…" style="max-width:260px" oninput="renderResTable()"/>
+            <select class="form-control" id="rClass" style="max-width:150px" onchange="renderResTable()"><option value="">All Classes</option></select>
+            <select class="form-control" id="rYear" style="max-width:130px" onchange="renderResTable()"><option value="">All Years</option></select>
+            <button class="btn btn-danger btn-sm" onclick="clearAllResults()">🗑️ Clear All</button>
+          </div>
+          <div id="resTable"></div>
+        </div>
+      </div>
+
+      <!-- ══ ACTIVITIES ══ -->
+      <div class="panel" id="panel-activities">
+        <div class="a-card">
+          <h3>➕ Post New Activity / Notice</h3>
+          <div class="form-row"><div class="form-group"><label>Title *</label><input type="text" class="form-control" id="aTitle" placeholder="e.g. Annual Sports Day 2024"/></div><div class="form-group"><label>Category *</label><select class="form-control" id="aCat"><option>Notice</option><option>Event</option><option>Academic</option><option>Sports</option><option>Cultural</option><option>Award</option><option>Other</option></select></div></div>
+          <div class="form-row"><div class="form-group"><label>Date *</label><input type="date" class="form-control" id="aDate"/></div><div class="form-group"><label>Photo (optional)</label><input type="file" class="form-control" id="aPhoto" accept="image/*"/></div></div>
+          <div class="form-group"><label>Description *</label><textarea class="form-control" id="aDesc" placeholder="Write a detailed description…"></textarea></div>
+          <div id="aMsg"></div>
+          <button class="btn btn-gold" onclick="postActivity()">📌 Post Activity</button>
+        </div>
+        <div class="a-card"><h3>📋 All Activities (<span id="aCount">0</span>)</h3><div id="actList"></div></div>
+      </div>
+
+      <!-- ══ TEACHERS ══ -->
+      <div class="panel" id="panel-teachers">
+        <div class="a-card">
+          <h3 id="tcFormTitle">➕ Add Teacher Profile</h3>
+          <input type="hidden" id="tcEditId"/>
+          <div class="form-row"><div class="form-group"><label>Full Name *</label><input type="text" class="form-control" id="tcName" placeholder="Mrs. Sunita Devi"/></div><div class="form-group"><label>Designation *</label><select class="form-control" id="tcDesig"><option>Headmistress / Principal</option><option>Senior Teacher (PGT)</option><option>TGT Teacher</option><option>JBT Teacher</option><option>English Teacher</option><option>Hindi Teacher</option><option>Maths Teacher</option><option>Science Teacher</option><option>Social Studies Teacher</option><option>Sanskrit Teacher</option><option>Computer Teacher</option><option>Drawing / Art Teacher</option><option>Physical Education</option><option>Other Staff</option></select></div></div>
+          <div class="form-row"><div class="form-group"><label>Subject(s) Taught</label><input type="text" class="form-control" id="tcSub" placeholder="Maths, Science"/></div><div class="form-group"><label>Qualification</label><input type="text" class="form-control" id="tcQual" placeholder="M.Sc., B.Ed."/></div></div>
+          <div class="form-row"><div class="form-group"><label>Experience (years)</label><input type="number" class="form-control" id="tcExp" placeholder="8"/></div><div class="form-group"><label>Phone (optional)</label><input type="text" class="form-control" id="tcPhone" placeholder="98XXXXXXXX"/></div></div>
+          <div class="form-group"><label>Profile Photo (optional)</label><input type="file" class="form-control" id="tcPhoto" accept="image/*"/></div>
+          <div id="tcMsg"></div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn btn-teal" onclick="saveTeacher()">💾 Save Profile</button><button class="btn btn-outline" onclick="resetTcForm()">✕ Cancel</button></div>
+        </div>
+        <div class="a-card"><h3>👩‍🏫 All Teachers (<span id="tcCount">0</span>)</h3><div id="tcList"></div></div>
+      </div>
+
+      <!-- ══ PUBLISH ══ -->
+      <div class="panel" id="panel-publish">
+        <div class="a-card">
+          <h3>🚀 Publish Data to Website</h3>
+          <p style="font-size:.88rem;color:var(--ink-lt);margin-bottom:20px;line-height:1.7">
+            Your data (results, teachers, activities) is stored locally in your browser. To make it visible to <strong>everyone on the internet</strong>, you must publish it by following these steps:
+          </p>
+          <div class="steps-card">
+            <h4>📋 How to Publish (do this every time you update data)</h4>
+            <ol class="steps-list">
+              <li>Click the <strong>"📥 Download data.json"</strong> button below — it downloads a file called <code>data.json</code></li>
+              <li>Go to your <strong>GitHub repository</strong> (where the website files are hosted)</li>
+              <li>Find the existing <code>data.json</code> file in the repo root and click it</li>
+              <li>Click the <strong>pencil (edit) icon</strong> or use "Upload file" to replace it with the new one</li>
+              <li>Click <strong>"Commit changes"</strong> — GitHub Pages will update in 1–2 minutes</li>
+              <li>Refresh the website on any device — everyone will now see the updated data ✅</li>
+            </ol>
+          </div>
+          <div style="background:var(--info-bg);border-radius:var(--rad-sm);padding:16px;margin-bottom:20px;border-left:4px solid var(--teal)">
+            <strong style="color:var(--teal)">💡 GitHub Upload Tip:</strong>
+            <span style="font-size:.83rem;color:var(--ink-lt)"> In your GitHub repo → click <code>data.json</code> → click ✏️ Edit → paste the JSON content → Commit. Or: drag the downloaded file onto the repo page and commit.</span>
+          </div>
+          <div style="display:flex;gap:14px;flex-wrap:wrap;align-items:center">
+            <button class="pub-btn" style="background:var(--teal);color:#fff;padding:14px 28px;font-size:.9rem" onclick="publishData()">📥 Download data.json (Publish)</button>
+            <button class="btn btn-outline" onclick="DataStore.exportBackup();toast('Backup downloaded!','success')">📤 Export Backup</button>
+            <button class="btn btn-gold" onclick="importPrompt()">📥 Import Backup</button>
+          </div>
+          <div id="publishMsg" class="mt-md"></div>
+        </div>
+        <div class="a-card" style="background:var(--gold-xpale);border:2px solid rgba(200,150,12,.3)">
+          <h3>📊 Current Data Summary</h3>
+          <div id="pubSummary"></div>
+        </div>
+      </div>
+
+      <!-- ══ SETTINGS ══ -->
+      <div class="panel" id="panel-settings">
+        <div class="a-card" style="max-width:480px">
+          <h3>🔒 Change Password</h3>
+          <div class="form-group"><label>Current Password</label><input type="password" class="form-control" id="sCur"/></div>
+          <div class="form-group"><label>New Password (min 6 chars)</label><input type="password" class="form-control" id="sNew"/></div>
+          <div class="form-group"><label>Confirm New Password</label><input type="password" class="form-control" id="sConf"/></div>
+          <div id="sMsg"></div>
+          <button class="btn btn-teal" onclick="changePass()">🔐 Update Password</button>
+        </div>
+        <div class="a-card" style="max-width:480px">
+          <h3>⚠️ Danger Zone</h3>
+          <div style="display:flex;flex-direction:column;gap:10px">
+            <button class="btn btn-danger btn-sm" onclick="clearAll('results')">🗑️ Delete All Results</button>
+            <button class="btn btn-danger btn-sm" onclick="clearAll('teachers')">🗑️ Delete All Teachers</button>
+            <button class="btn btn-danger btn-sm" onclick="clearAll('activities')">🗑️ Delete All Activities</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+</div>
+
+<script src="datastore.js"></script>
+<script src="common.js"></script>
+<script>
+/* ══ AUTH ══ */
+var PASS_KEY='gghs_admin_pw';
+function getAdminPass(){return localStorage.getItem(PASS_KEY)||'admin@gghs123';}
+function doLogin(){
+  var u=document.getElementById('lUser').value.trim(),p=document.getElementById('lPass').value;
+  if(u==='admin'&&p===getAdminPass()){
+    localStorage.setItem('gghs_adminMode','true');
+    document.getElementById('loginScreen').style.display='none';
+    document.getElementById('adminPanel').classList.remove('hidden');
+    initAdmin();
+  } else {document.getElementById('loginErr').innerHTML='<div class="alert alert-danger">❌ Incorrect username or password.</div>';}
+}
+document.getElementById('lPass').addEventListener('keyup',function(e){if(e.key==='Enter')doLogin();});
+function doLogout(){
+  localStorage.removeItem('gghs_adminMode');
+  document.getElementById('adminPanel').classList.add('hidden');
+  document.getElementById('loginScreen').style.display='';
+  document.getElementById('lPass').value='';
+  document.getElementById('loginErr').innerHTML='';
+}
+
+/* ══ PANEL ══ */
+var PT={dashboard:'📊 Dashboard',results:'📋 Manage Results',activities:'📸 Activities & Notices',teachers:'👩‍🏫 Teacher Profiles',publish:'🚀 Publish Data',settings:'⚙️ Settings'};
+function switchPanel(id){
+  document.querySelectorAll('.panel').forEach(function(p){p.classList.remove('active');});
+  document.querySelectorAll('.sb-item').forEach(function(n){n.classList.remove('active');});
+  document.getElementById('panel-'+id).classList.add('active');
+  var si=document.querySelector('[data-p="'+id+'"]');if(si)si.classList.add('active');
+  document.getElementById('panelTitle').textContent=PT[id]||id;
+  if(id==='results'){populateResFilters();renderResTable();}
+  if(id==='dashboard')loadDash();
+  if(id==='publish')loadPubSummary();
+}
+document.getElementById('sbNav').addEventListener('click',function(e){
+  var item=e.target.closest('.sb-item');if(item&&item.dataset.p)switchPanel(item.dataset.p);
+});
+
+/* ══ INIT ══ */
+async function initAdmin(){
+  await DataStore.load();
+  var info=DataStore.info();
+  var srcText={'remote':'✅ Loaded from GitHub','local':'⚠️ Local changes (unpublished)','local-fallback':'🔴 No data.json (local dev)'}[info.source]||info.source;
+  var srcCls={'remote':'src-remote','local':'src-local','local-fallback':'src-fallback'}[info.source]||'src-fallback';
+  document.getElementById('srcBadge').innerHTML='<span class="source-badge '+srcCls+'">'+srcText+'</span>';
+  document.getElementById('aDate').valueAsDate=new Date();
+  loadDash(); renderActivityList(); renderTeacherList(); renderResTable(); populateResFilters();
+  if(window.innerWidth<768){var dg=document.getElementById('dashGrid');if(dg)dg.style.gridTemplateColumns='1fr';}
+}
+
+/* ══ DASHBOARD ══ */
+function loadDash(){
+  var r=DataStore.get('results'),t=DataStore.get('teachers'),a=DataStore.get('activities');
+  var uniq=new Set(r.map(function(s){return s.srn||s.rollNo;})).size;
+  document.getElementById('dashStats').innerHTML=
+    '<div class="dash-stat"><span class="ds-icon">👩‍🎓</span><div><div class="ds-num">'+(uniq||0)+'</div><div class="ds-lbl">Students</div></div></div>'+
+    '<div class="dash-stat gold"><span class="ds-icon">👩‍🏫</span><div><div class="ds-num">'+t.length+'</div><div class="ds-lbl">Teachers</div></div></div>'+
+    '<div class="dash-stat green"><span class="ds-icon">📌</span><div><div class="ds-num">'+a.length+'</div><div class="ds-lbl">Activities</div></div></div>'+
+    '<div class="dash-stat red"><span class="ds-icon">📋</span><div><div class="ds-num">'+r.length+'</div><div class="ds-lbl">Result Records</div></div></div>';
+  var da=document.getElementById('dashActs');
+  if(!a.length){da.innerHTML='<p style="color:var(--muted);font-size:.85rem">No activities yet.</p>';return;}
+  da.innerHTML=a.slice(0,5).map(function(x){return '<div style="display:flex;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);align-items:center"><span style="font-size:1.2rem">📌</span><div style="flex:1"><div style="font-weight:700;font-size:.85rem">'+x.title+'</div><div style="font-size:.72rem;color:var(--muted)">'+x.category+' · '+fmtDate(x.date)+'</div></div></div>';}).join('');
+}
+
+/* ══ PUBLISH ══ */
+function loadPubSummary(){
+  var r=DataStore.get('results'),t=DataStore.get('teachers'),a=DataStore.get('activities');
+  var uniq=new Set(r.map(function(s){return s.srn||s.rollNo;})).size;
+  document.getElementById('pubSummary').innerHTML=
+    '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px">'+
+    '<div style="background:#fff;border-radius:8px;padding:14px;text-align:center;border:1px solid var(--border)"><div style="font-size:1.6rem;font-weight:800;color:var(--teal)">'+uniq+'</div><div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--muted)">Students</div></div>'+
+    '<div style="background:#fff;border-radius:8px;padding:14px;text-align:center;border:1px solid var(--border)"><div style="font-size:1.6rem;font-weight:800;color:var(--teal)">'+r.length+'</div><div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--muted)">Result Records</div></div>'+
+    '<div style="background:#fff;border-radius:8px;padding:14px;text-align:center;border:1px solid var(--border)"><div style="font-size:1.6rem;font-weight:800;color:var(--teal)">'+t.length+'</div><div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--muted)">Teachers</div></div>'+
+    '<div style="background:#fff;border-radius:8px;padding:14px;text-align:center;border:1px solid var(--border)"><div style="font-size:1.6rem;font-weight:800;color:var(--teal)">'+a.length+'</div><div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--muted)">Activities</div></div>'+
+    '</div>'+
+    '<p style="margin-top:14px;font-size:.82rem;color:var(--muted)">Last generated: '+new Date().toLocaleString('en-IN')+'</p>';
+}
+function publishData(){
+  DataStore.publishData();
+  document.getElementById('publishMsg').innerHTML='<div class="alert alert-success">✅ <strong>data.json downloaded!</strong> Now upload this file to your GitHub repository root folder to publish changes for everyone.</div>';
+  toast('data.json downloaded! Upload to GitHub.','success');
+}
+function importPrompt(){
+  var inp=document.createElement('input');inp.type='file';inp.accept='.json';
+  inp.onchange=async function(e){
+    var f=e.target.files[0];if(!f)return;
+    try{await DataStore.importFromFile(f);toast('Data imported!','success');initAdmin();}
+    catch(e){toast('Invalid JSON file.','danger');}
+  };
+  inp.click();
+}
+
+/* ══ EXCEL UPLOAD ══ */
+var parsedRows=[];
+var DEFAULT_SUBJECTS=['English','Hindi','Maths','Science','Social','Sanskrit','Drawing'];
+function downloadTemplate(){
+  var wb=XLSX.utils.book_new();
+  var hdr=['RollNo','SRN','Name','FatherName','MotherName','DOB','Class','Section','Year',...DEFAULT_SUBJECTS.flatMap(function(s){return [s+'_Max',s+'_Obt'];}),'Position','Remarks'];
+  var row=['2401','HR123456','Priya Kumari','Rajesh Kumar','Sunita Devi','15/08/2010','9','A','2024',100,78,100,82,100,75,100,69,100,88,100,71,100,65,'3','Good performance'];
+  var ws=XLSX.utils.aoa_to_sheet([hdr,row]);
+  ws['!cols']=hdr.map(function(){return{wch:16};});
+  XLSX.utils.book_append_sheet(wb,ws,'Results');
+  XLSX.writeFile(wb,'GGHS_Result_Template.xlsx');
+  toast('Template downloaded!');
+}
+function handleDrop(e){e.preventDefault();document.getElementById('uploadZone').classList.remove('over');var f=e.dataTransfer.files[0];if(f)processXL(f);}
+function handleFile(e){var f=e.target.files[0];if(f)processXL(f);}
+function processXL(file){
+  var reader=new FileReader();
+  reader.onload=function(e){
+    try{
+      var wb=XLSX.read(e.target.result,{type:'binary',cellDates:true});
+      var ws=wb.Sheets[wb.SheetNames[0]];
+      var raw=XLSX.utils.sheet_to_json(ws,{defval:''});
+      if(!raw.length){showMsg('uploadMsg','Excel file appears empty.','danger');return;}
+      parsedRows=parseRows(raw);
+      showPreview(parsedRows);
+      showMsg('uploadMsg','✅ Read '+parsedRows.length+' student record(s).','success');
+    }catch(err){showMsg('uploadMsg','❌ Error: '+err.message,'danger');}
+  };
+  reader.readAsBinaryString(file);
+}
+function parseRows(raw){
+  return raw.map(function(row){
+    var subjects={};
+    var fixed=new Set(['RollNo','SRN','Name','FatherName','MotherName','DOB','Class','Section','Year','Position','Remarks']);
+    Object.keys(row).forEach(function(k){
+      if(fixed.has(k))return;
+      var parts=k.split('_');if(parts.length<2)return;
+      var sub=parts.slice(0,-1).join(' ');
+      var type=parts[parts.length-1].toLowerCase();
+      if(!subjects[sub])subjects[sub]={max:100,obt:0};
+      if(type==='max')subjects[sub].max=Number(row[k])||100;
+      if(type==='obt')subjects[sub].obt=Number(row[k])||0;
+    });
+    var dob=String(row['DOB']||'').trim();
+    if(row['DOB'] instanceof Date)dob=row['DOB'].toISOString().split('T')[0];
+    else if(dob.includes('/')){var p=dob.split('/');if(p.length===3)dob=(p[2].length===2?'20'+p[2]:p[2])+'-'+p[1].padStart(2,'0')+'-'+p[0].padStart(2,'0');}
+    return{id:genId('r'),rollNo:String(row['RollNo']||'').trim(),srn:String(row['SRN']||'').trim(),name:String(row['Name']||'').trim(),fatherName:String(row['FatherName']||'').trim(),motherName:String(row['MotherName']||'').trim(),dob:dob,class:String(row['Class']||'').trim(),section:String(row['Section']||'').trim(),year:String(row['Year']||'').trim(),position:String(row['Position']||'').trim(),remarks:String(row['Remarks']||'').trim(),subjects:subjects};
+  }).filter(function(r){return r.rollNo&&r.name;});
+}
+function showPreview(data){
+  if(!data.length)return;
+  document.getElementById('previewSec').classList.remove('hidden');
+  document.getElementById('prevCount').textContent=data.length;
+  var allSubs=new Set();data.forEach(function(r){Object.keys(r.subjects).forEach(function(s){allSubs.add(s);});});
+  var subs=[...allSubs];
+  document.getElementById('prevHead').innerHTML=['Roll No','SRN','Name','Father','Mother','DOB','Class','Year',...subs.map(function(s){return s+' (Obt)';}), 'Total','%'].map(function(h){return '<th>'+h+'</th>';}).join('');
+  document.getElementById('prevBody').innerHTML=data.map(function(s){
+    var m=0,o=0;Object.values(s.subjects).forEach(function(v){m+=Number(v.max||0);o+=Number(v.obt||0);});
+    return '<tr><td>'+s.rollNo+'</td><td>'+(s.srn||'—')+'</td><td>'+s.name+'</td><td>'+(s.fatherName||'—')+'</td><td>'+(s.motherName||'—')+'</td><td>'+(s.dob||'—')+'</td><td>'+s.class+'</td><td>'+s.year+'</td>'+subs.map(function(k){return '<td>'+(s.subjects[k]?s.subjects[k].obt:'—')+'</td>';}).join('')+'<td>'+o+'/'+m+'</td><td>'+(m?(o/m*100).toFixed(1):0)+'%</td></tr>';
+  }).join('');
+}
+function clearPreview(){parsedRows=[];document.getElementById('previewSec').classList.add('hidden');document.getElementById('xlFile').value='';document.getElementById('uploadMsg').innerHTML='';}
+function saveResults(){
+  if(!parsedRows.length)return;
+  var exist=DataStore.get('results');
+  var filtered=exist.filter(function(e){return !parsedRows.some(function(n){return n.rollNo===e.rollNo&&n.year===e.year;});});
+  DataStore.set('results',[...filtered,...parsedRows]);
+  toast('✅ '+parsedRows.length+' results saved! Remember to Publish Data.','success');
+  clearPreview();populateResFilters();renderResTable();loadDash();
+}
+function populateResFilters(){
+  var all=DataStore.get('results');
+  var classes=[...new Set(all.map(function(r){return r.class;}).filter(Boolean))].sort(function(a,b){return Number(a)-Number(b);});
+  var years=[...new Set(all.map(function(r){return r.year;}).filter(Boolean))].sort().reverse();
+  document.getElementById('rClass').innerHTML='<option value="">All Classes</option>'+classes.map(function(c){return '<option value="'+c+'">Class '+c+'</option>';}).join('');
+  document.getElementById('rYear').innerHTML='<option value="">All Years</option>'+years.map(function(y){return '<option value="'+y+'">'+y+'</option>';}).join('');
+}
+function renderResTable(){
+  var all=DataStore.get('results');
+  var q=(document.getElementById('rSearch')||{value:''}).value.toLowerCase();
+  var cls=(document.getElementById('rClass')||{value:''}).value;
+  var yr=(document.getElementById('rYear')||{value:''}).value;
+  var data=all;
+  if(q)data=data.filter(function(r){return r.name.toLowerCase().includes(q)||String(r.rollNo).includes(q)||String(r.srn||'').toLowerCase().includes(q);});
+  if(cls)data=data.filter(function(r){return r.class===cls;});
+  if(yr)data=data.filter(function(r){return r.year===yr;});
+  var el=document.getElementById('resTable');
+  if(!data.length){el.innerHTML='<div class="alert alert-info">No records found.</div>';return;}
+  el.innerHTML='<div class="tbl-wrap"><table><thead><tr><th>Roll No</th><th>SRN</th><th>Name</th><th>Father</th><th>Mother</th><th>Class</th><th>Year</th><th>%</th><th>Del</th></tr></thead><tbody>'+
+  data.map(function(s){var m=0,o=0;Object.values(s.subjects||{}).forEach(function(v){m+=Number(v.max||0);o+=Number(v.obt||0);});var pc=m?(o/m*100).toFixed(1):0;return '<tr><td><strong>'+s.rollNo+'</strong></td><td>'+(s.srn||'—')+'</td><td>'+s.name+'</td><td>'+(s.fatherName||'—')+'</td><td>'+(s.motherName||'—')+'</td><td>'+s.class+'</td><td>'+(s.year||'—')+'</td><td>'+pc+'%</td><td><button class="btn btn-danger btn-sm" onclick="delResult(\''+s.id+'\')">🗑️</button></td></tr>';}).join('')+
+  '</tbody></table></div><div style="margin-top:8px;font-size:.75rem;color:var(--muted)">'+data.length+' record(s)</div>';
+}
+function delResult(id){if(!confirmDel('Delete this result?'))return;DataStore.del('results',id);renderResTable();loadDash();toast('Deleted.','info');}
+function clearAllResults(){if(!confirmDel('Delete ALL result records?'))return;DataStore.set('results',[]);populateResFilters();renderResTable();loadDash();toast('All results cleared.','warning');}
+
+/* ══ ACTIVITIES ══ */
+function postActivity(){
+  var title=document.getElementById('aTitle').value.trim(),cat=document.getElementById('aCat').value,date=document.getElementById('aDate').value,desc=document.getElementById('aDesc').value.trim(),photo=document.getElementById('aPhoto').files[0];
+  if(!title||!date||!desc){showMsg('aMsg','Please fill all required fields.','danger');return;}
+  function proceed(img){
+    var acts=DataStore.get('activities');
+    acts.unshift({id:genId('a'),title:title,category:cat,date:date,description:desc,image:img||null});
+    DataStore.set('activities',acts);
+    showMsg('aMsg','✅ Activity posted! Remember to Publish Data.','success');
+    document.getElementById('aTitle').value='';document.getElementById('aDesc').value='';document.getElementById('aPhoto').value='';
+    renderActivityList();loadDash();toast('Activity posted!','success');
+  }
+  if(photo){var r=new FileReader();r.onload=function(e){proceed(e.target.result);};r.readAsDataURL(photo);}else proceed(null);
+}
+function renderActivityList(){
+  var acts=DataStore.get('activities');
+  document.getElementById('aCount').textContent=acts.length;
+  var el=document.getElementById('actList');
+  if(!acts.length){el.innerHTML='<div class="empty-state"><div class="es-icon">📭</div><h4>No Activities</h4></div>';return;}
+  el.innerHTML=acts.map(function(a){return '<div class="list-row"><div class="lr-icon">'+(a.image?'<img src="'+a.image+'" alt="" />':'📌')+'</div><div class="lr-info"><div class="lr-title">'+a.title+'</div><div class="lr-sub">'+a.category+' · '+fmtDate(a.date)+'</div></div><div class="lr-actions"><button class="btn btn-danger btn-sm" onclick="delActivity(\''+a.id+'\')">🗑️</button></div></div>';}).join('');
+}
+function delActivity(id){if(!confirmDel('Delete this activity?'))return;DataStore.del('activities',id);renderActivityList();loadDash();toast('Deleted.','info');}
+
+/* ══ TEACHERS ══ */
+function saveTeacher(){
+  var name=document.getElementById('tcName').value.trim(),desig=document.getElementById('tcDesig').value,sub=document.getElementById('tcSub').value.trim(),qual=document.getElementById('tcQual').value.trim(),exp=document.getElementById('tcExp').value.trim(),phone=document.getElementById('tcPhone').value.trim(),photo=document.getElementById('tcPhoto').files[0],eid=document.getElementById('tcEditId').value;
+  if(!name){showMsg('tcMsg','Please enter the teacher name.','danger');return;}
+  function proceed(img){
+    var list=DataStore.get('teachers');
+    var obj={id:eid||genId('t'),name:name,designation:desig,subject:sub,qualification:qual,experience:exp,phone:phone,photo:img};
+    if(eid){var idx=list.findIndex(function(x){return x.id===eid;});if(idx>=0){if(!img&&list[idx].photo)obj.photo=list[idx].photo;list[idx]=obj;}}
+    else list.push(obj);
+    DataStore.set('teachers',list);
+    showMsg('tcMsg','✅ Teacher saved! Remember to Publish Data.','success');
+    resetTcForm();renderTeacherList();loadDash();toast('Teacher saved!','success');
+  }
+  if(photo){var r=new FileReader();r.onload=function(e){proceed(e.target.result);};r.readAsDataURL(photo);}else proceed(null);
+}
+function resetTcForm(){['tcEditId','tcName','tcSub','tcQual','tcExp','tcPhone'].forEach(function(id){document.getElementById(id).value='';});document.getElementById('tcPhoto').value='';document.getElementById('tcFormTitle').textContent='➕ Add Teacher Profile';document.getElementById('tcMsg').innerHTML='';}
+function editTeacher(id){
+  var t=DataStore.get('teachers').find(function(x){return x.id===id;});if(!t)return;
+  document.getElementById('tcEditId').value=t.id;document.getElementById('tcName').value=t.name||'';document.getElementById('tcDesig').value=t.designation||'';document.getElementById('tcSub').value=t.subject||'';document.getElementById('tcQual').value=t.qualification||'';document.getElementById('tcExp').value=t.experience||'';document.getElementById('tcPhone').value=t.phone||'';
+  document.getElementById('tcFormTitle').textContent='✏️ Edit Teacher Profile';
+  document.getElementById('panel-teachers').querySelector('.a-card').scrollIntoView({behavior:'smooth'});
+}
+function delTeacher(id){if(!confirmDel('Delete this teacher?'))return;DataStore.del('teachers',id);renderTeacherList();loadDash();toast('Deleted.','info');}
+function renderTeacherList(){
+  var list=DataStore.get('teachers');
+  document.getElementById('tcCount').textContent=list.length;
+  var el=document.getElementById('tcList');
+  if(!list.length){el.innerHTML='<div class="empty-state"><div class="es-icon">👩‍🏫</div><h4>No Teachers Yet</h4></div>';return;}
+  el.innerHTML=list.map(function(t){return '<div class="list-row"><div class="lr-icon">'+(t.photo?'<img src="'+t.photo+'" alt="'+t.name+'" />':'👩‍🏫')+'</div><div class="lr-info"><div class="lr-title">'+t.name+'</div><div class="lr-sub">'+(t.designation||'')+(t.subject?' · '+t.subject:'')+'</div></div><div class="lr-actions"><button class="btn btn-outline btn-sm" onclick="editTeacher(\''+t.id+'\')">✏️</button><button class="btn btn-danger btn-sm" onclick="delTeacher(\''+t.id+'\')">🗑️</button></div></div>';}).join('');
+}
+
+/* ══ SETTINGS ══ */
+function changePass(){
+  var cur=document.getElementById('sCur').value,nwp=document.getElementById('sNew').value,conf=document.getElementById('sConf').value;
+  if(cur!==getAdminPass()){showMsg('sMsg','❌ Current password incorrect.','danger');return;}
+  if(nwp.length<6){showMsg('sMsg','❌ Min 6 characters.','danger');return;}
+  if(nwp!==conf){showMsg('sMsg','❌ Passwords do not match.','danger');return;}
+  localStorage.setItem(PASS_KEY,nwp);showMsg('sMsg','✅ Password changed!','success');
+  ['sCur','sNew','sConf'].forEach(function(id){document.getElementById(id).value='';});
+}
+function clearAll(key){
+  if(!confirmDel('Delete ALL '+key+'?'))return;
+  DataStore.set(key,[]);
+  if(key==='results'){populateResFilters();renderResTable();}
+  if(key==='teachers')renderTeacherList();
+  if(key==='activities')renderActivityList();
+  loadDash();toast('All '+key+' cleared.','warning');
+}
+function showMsg(id,msg,type){var el=document.getElementById(id);if(!el)return;el.innerHTML='<div class="alert alert-'+type+'">'+msg+'</div>';setTimeout(function(){if(el)el.innerHTML='';},4000);}
+</script>
+</body>
+</html>

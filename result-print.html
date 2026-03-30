@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Result Card – GGHS Kagdana</title>
+  <style>
+    /* ── Base ── */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Times New Roman', Times, serif;
+      font-size: 11pt;
+      color: #000;
+      background: #fff;
+      padding: 0;
+    }
+
+    /* ── Print button (screen only) ── */
+    .print-btn-bar {
+      background: #0d4f5c;
+      padding: 12px 20px;
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+    .print-btn-bar button {
+      background: #c8960c;
+      color: #fff;
+      border: none;
+      padding: 9px 22px;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: bold;
+      cursor: pointer;
+      font-family: Arial, sans-serif;
+    }
+    .print-btn-bar button:hover { background: #a67a08; }
+    .print-btn-bar .close-btn { background: transparent; border: 2px solid rgba(255,255,255,.4); color: #fff; }
+    .print-btn-bar span { color: rgba(255,255,255,.7); font-size: 13px; font-family: Arial, sans-serif; }
+
+    /* ── A4 card ── */
+    .rc {
+      max-width: 210mm;
+      margin: 12px auto;
+      border: 1px solid #ccc;
+      background: #fff;
+    }
+
+    /* HEAD */
+    .rc-head {
+      background: #0d4f5c;
+      color: #fff;
+      padding: 18px 24px;
+      text-align: center;
+    }
+    .rc-head .school-logo { font-size: 2rem; margin-bottom: 6px; }
+    .rc-head .school-name {
+      font-size: 16pt;
+      font-weight: bold;
+      letter-spacing: .02em;
+      color: #e8c97e;
+    }
+    .rc-head .school-addr {
+      font-size: 9pt;
+      color: rgba(255,255,255,.7);
+      margin-top: 4px;
+    }
+    .rc-head .exam-title {
+      margin-top: 12px;
+      background: rgba(200,150,12,.25);
+      border: 1px solid rgba(200,150,12,.5);
+      display: inline-block;
+      padding: 4px 20px;
+      border-radius: 99px;
+      font-size: 9pt;
+      font-weight: bold;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: #e8c97e;
+    }
+
+    /* STUDENT INFO */
+    .rc-student {
+      padding: 14px 24px 10px;
+      border-bottom: 2px solid #0d4f5c;
+    }
+    .student-name {
+      font-size: 17pt;
+      font-weight: bold;
+      color: #0d4f5c;
+      margin-bottom: 10px;
+      border-bottom: 1px dashed #ccc;
+      padding-bottom: 8px;
+    }
+    .meta-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 10pt;
+    }
+    .meta-table td {
+      padding: 4px 8px;
+      border: 1px solid #ddd;
+      width: 25%;
+    }
+    .meta-table td:nth-child(odd) {
+      background: #f0f6f7;
+      font-weight: bold;
+      color: #0d4f5c;
+      font-size: 8pt;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+      width: 16%;
+    }
+    .meta-table td:nth-child(even) {
+      width: 34%;
+    }
+
+    /* MARKS TABLE */
+    .rc-body { padding: 12px 24px; }
+    .marks-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 10pt;
+      margin-top: 8px;
+    }
+    .marks-table thead tr {
+      background: #0d4f5c;
+      color: #fff;
+    }
+    .marks-table thead th {
+      padding: 8px 10px;
+      font-size: 8.5pt;
+      font-weight: bold;
+      letter-spacing: .05em;
+      text-align: center;
+      border: 1px solid #0a3d48;
+    }
+    .marks-table thead th:nth-child(2) { text-align: left; }
+    .marks-table tbody tr { border-bottom: 1px solid #ddd; }
+    .marks-table tbody tr:nth-child(even) { background: #f8f8f8; }
+    .marks-table tbody td {
+      padding: 7px 10px;
+      text-align: center;
+      border: 1px solid #ddd;
+    }
+    .marks-table tbody td:nth-child(2) { text-align: left; font-weight: bold; }
+    .marks-table tbody td.obt { font-weight: bold; color: #0d4f5c; font-size: 11pt; }
+    .marks-table tfoot tr { background: #fdf5dc; border-top: 2px solid #c8960c; }
+    .marks-table tfoot td {
+      padding: 9px 10px;
+      text-align: center;
+      font-weight: bold;
+      font-size: 11pt;
+      border: 1px solid #c8960c;
+    }
+
+    /* GRADES */
+    .grade { display: inline-block; padding: 2px 10px; border-radius: 99px; font-size: 9pt; font-weight: bold; }
+    .g-a1, .g-a2 { background: #d5f5e3; color: #117a45; }
+    .g-b1, .g-b2 { background: #d6eaf8; color: #1a5276; }
+    .g-c1, .g-c2 { background: #fef9e7; color: #7d6608; }
+    .g-d  { background: #fde8e8; color: #7a0f0f; }
+    .g-e, .g-f { background: #2c3e50; color: #fff; }
+    .pass-text { color: #117a45; font-weight: bold; }
+    .fail-text { color: #a31515; font-weight: bold; }
+
+    /* SUMMARY BOXES */
+    .summary-row {
+      display: table;
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 14px;
+    }
+    .sum-box {
+      display: table-cell;
+      text-align: center;
+      padding: 12px 8px;
+      border: 1px solid #ddd;
+      background: #f8f8f8;
+    }
+    .sum-box:first-child { border-left: 3px solid #0d4f5c; }
+    .sum-box.pass-box { background: #d5f5e3; border-color: #27ae60; }
+    .sum-box.fail-box { background: #fde8e8; border-color: #c0392b; }
+    .sum-val { font-size: 18pt; font-weight: bold; color: #0d4f5c; line-height: 1; }
+    .sum-lbl { font-size: 7.5pt; font-weight: bold; text-transform: uppercase; letter-spacing: .07em; color: #666; margin-top: 3px; }
+
+    /* GRADE SCALE */
+    .grade-scale {
+      margin-top: 12px;
+      background: #fffbf0;
+      border: 1px solid rgba(200,150,12,.3);
+      padding: 8px 12px;
+      border-radius: 4px;
+    }
+    .grade-scale .gs-title {
+      font-size: 8pt; font-weight: bold; color: #0d4f5c;
+      text-transform: uppercase; letter-spacing: .07em;
+      margin-bottom: 5px;
+    }
+    .grade-scale .gs-items {
+      font-size: 8pt;
+      color: #333;
+      line-height: 1.7;
+    }
+
+    /* FOOTER */
+    .rc-footer {
+      padding: 14px 24px;
+      border-top: 1px dashed #bbb;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 10px;
+    }
+    .rc-footer .note { font-size: 8pt; color: #888; }
+    .sig-area { display: flex; gap: 36px; }
+    .sig-block { text-align: center; }
+    .sig-line { width: 100px; height: 1px; background: #000; margin: 0 auto 3px; }
+    .sig-block .sig-lbl { font-size: 8pt; color: #555; }
+
+    /* Remarks */
+    .remarks { margin-top: 10px; background: #e8f4f8; border-left: 4px solid #0d4f5c; padding: 8px 12px; font-size: 9.5pt; border-radius: 0 4px 4px 0; }
+    .remarks strong { color: #0d4f5c; }
+
+    /* ── PRINT STYLES ── */
+    @media print {
+      @page { size: A4 portrait; margin: 8mm 10mm; }
+      body { margin: 0; padding: 0; }
+      .print-btn-bar { display: none !important; }
+      .rc { margin: 0; border: none; max-width: 100%; }
+      .rc-head { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .marks-table thead tr { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .summary-row, .sum-box, .marks-table tbody tr:nth-child(even) {
+        -webkit-print-color-adjust: exact; print-color-adjust: exact;
+      }
+      .pass-box, .fail-box, .grade-scale, .g-a1, .g-a2, .g-b1, .g-b2, .g-c1, .g-c2, .g-d, .g-e {
+        -webkit-print-color-adjust: exact; print-color-adjust: exact;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="print-btn-bar" id="btnBar">
+  <button onclick="window.print()">🖨️ Print / Save as PDF</button>
+  <button class="close-btn" onclick="window.close()">✕ Close</button>
+  <span>Paper size: A4 Portrait | In print dialog → "Save as PDF" → Paper: A4</span>
+</div>
+
+<div class="rc" id="rc">
+  <!-- filled by JS -->
+</div>
+
+<script src="datastore.js"></script>
+<script src="common.js"></script>
+<script>
+function getGradeClass(g) {
+  const m = { A1:'g-a1', A2:'g-a2', B1:'g-b1', B2:'g-b2', C1:'g-c1', C2:'g-c2', D:'g-d', E:'g-e', F:'g-f' };
+  return m[g] || 'g-e';
+}
+function getGrade(pct) {
+  pct = Number(pct);
+  if (pct >= 91) return 'A1'; if (pct >= 81) return 'A2';
+  if (pct >= 71) return 'B1'; if (pct >= 61) return 'B2';
+  if (pct >= 51) return 'C1'; if (pct >= 41) return 'C2';
+  if (pct >= 33) return 'D'; return 'E';
+}
+function gradeLabel(g) {
+  const m = { A1:'Outstanding', A2:'Excellent', B1:'Very Good', B2:'Good', C1:'Average', C2:'Satisfactory', D:'Pass', E:'Needs Improvement' };
+  return m[g] || '';
+}
+function fmtDate(d) {
+  if (!d) return '—';
+  try { return new Date(d).toLocaleDateString('en-IN', { day:'numeric', month:'long', year:'numeric' }); }
+  catch { return d; }
+}
+
+(async function () {
+  await DataStore.load();
+
+  // Get student data from URL param
+  const params = new URLSearchParams(location.search);
+  const roll   = params.get('roll');
+  const year   = params.get('year');
+  const cls    = params.get('class');
+
+  if (!roll) { document.getElementById('rc').innerHTML = '<p style="padding:40px;text-align:center;color:#a31515">No student specified. Please go back and search again.</p>'; return; }
+
+  const results = DataStore.get('results');
+  let found = results.filter(r => String(r.rollNo).toLowerCase() === roll.toLowerCase() || String(r.srn||'').toLowerCase() === roll.toLowerCase());
+  if (year) found = found.filter(r => String(r.year) === year);
+  if (cls)  found = found.filter(r => String(r.class) === cls);
+
+  if (!found.length) { document.getElementById('rc').innerHTML = '<p style="padding:40px;text-align:center;color:#a31515">Result not found. Please go back and try again.</p>'; return; }
+
+  const s = found[0];
+  const subs = s.subjects || {};
+  const subKeys = Object.keys(subs);
+  let totalMax = 0, totalObt = 0, failSubs = 0;
+  subKeys.forEach(k => {
+    const mx = Number(subs[k].max || 0);
+    const ob = Number(subs[k].obt || 0);
+    totalMax += mx; totalObt += ob;
+    if (mx && (ob / mx) * 100 < 33) failSubs++;
+  });
+  const pct = totalMax ? (totalObt / totalMax) * 100 : 0;
+  const grade = getGrade(pct);
+  const passed = pct >= 33 && failSubs === 0;
+
+  document.title = `Result – ${s.name} – GGHS Kagdana`;
+
+  document.getElementById('rc').innerHTML = `
+    <div class="rc-head">
+      <div class="school-logo">🏫</div>
+      <div class="school-name">Govt. Girls High School Kagdana</div>
+      <div class="school-addr">Tehsil Nathusari Chopta, District Sirsa, Haryana – 125110 &nbsp;|&nbsp; gghs4700kagdana@gmail.com</div>
+      <div class="exam-title">Annual Examination Result — ${s.year || '______'}</div>
+    </div>
+
+    <div class="rc-student">
+      <div class="student-name">${s.name}</div>
+      <table class="meta-table">
+        <tr>
+          <td>Roll No.</td><td>${s.rollNo || '—'}</td>
+          <td>SRN</td><td>${s.srn || '—'}</td>
+        </tr>
+        <tr>
+          <td>Class</td><td>${s.class ? 'Class ' + s.class + (s.section ? ' – ' + s.section : '') : '—'}</td>
+          <td>Exam Year</td><td>${s.year || '—'}</td>
+        </tr>
+        <tr>
+          <td>Date of Birth</td><td>${fmtDate(s.dob)}</td>
+          <td>Father's Name</td><td>${s.fatherName || '—'}</td>
+        </tr>
+        <tr>
+          <td>Mother's Name</td><td colspan="3">${s.motherName || '—'}</td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="rc-body">
+      <table class="marks-table">
+        <thead>
+          <tr>
+            <th>S.No.</th>
+            <th>Subject</th>
+            <th>Max Marks</th>
+            <th>Marks Obtained</th>
+            <th>Percentage</th>
+            <th>Grade</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${subKeys.map((k, i) => {
+            const mx = Number(subs[k].max || 0);
+            const ob = Number(subs[k].obt || 0);
+            const sp = mx ? (ob / mx) * 100 : 0;
+            const sg = getGrade(sp);
+            const spas = sp >= 33;
+            return `<tr>
+              <td>${i + 1}</td>
+              <td>${k}</td>
+              <td>${mx}</td>
+              <td class="obt">${ob}</td>
+              <td>${sp.toFixed(1)}%</td>
+              <td><span class="grade ${getGradeClass(sg)}">${sg}</span></td>
+              <td class="${spas ? 'pass-text' : 'fail-text'}">${spas ? 'PASS' : 'FAIL'}</td>
+            </tr>`;
+          }).join('')}
+        </tbody>
+        <tfoot>
+          <tr>
+            <td colspan="2" style="text-align:left">GRAND TOTAL</td>
+            <td>${totalMax}</td>
+            <td style="color:#0d4f5c">${totalObt}</td>
+            <td>${pct.toFixed(1)}%</td>
+            <td><span class="grade ${getGradeClass(grade)}">${grade}</span></td>
+            <td class="${passed ? 'pass-text' : 'fail-text'}">${passed ? 'PASS' : 'FAIL'}</td>
+          </tr>
+        </tfoot>
+      </table>
+
+      <!-- SUMMARY -->
+      <div class="summary-row">
+        <div class="sum-box">
+          <div class="sum-val">${totalObt} / ${totalMax}</div>
+          <div class="sum-lbl">Marks Obtained</div>
+        </div>
+        <div class="sum-box">
+          <div class="sum-val">${pct.toFixed(1)}%</div>
+          <div class="sum-lbl">Percentage</div>
+        </div>
+        <div class="sum-box">
+          <div class="sum-val"><span class="grade ${getGradeClass(grade)}">${grade}</span></div>
+          <div class="sum-lbl">Overall Grade</div>
+        </div>
+        <div class="sum-box">
+          <div class="sum-val" style="font-size:11pt">${gradeLabel(grade)}</div>
+          <div class="sum-lbl">Grade Meaning</div>
+        </div>
+        <div class="sum-box ${passed ? 'pass-box' : 'fail-box'}">
+          <div class="sum-val" style="font-size:20pt">${passed ? '✓ PASS' : '✗ FAIL'}</div>
+          <div class="sum-lbl">Final Result</div>
+        </div>
+        ${s.position ? `<div class="sum-box"><div class="sum-val">${s.position}</div><div class="sum-lbl">Class Rank</div></div>` : ''}
+      </div>
+
+      <!-- GRADE SCALE -->
+      <div class="grade-scale">
+        <div class="gs-title">Grade Scale (HBSE)</div>
+        <div class="gs-items">
+          A1 ≥ 91% – Outstanding &nbsp;|&nbsp; A2 81–90% – Excellent &nbsp;|&nbsp; B1 71–80% – Very Good &nbsp;|&nbsp;
+          B2 61–70% – Good &nbsp;|&nbsp; C1 51–60% – Average &nbsp;|&nbsp; C2 41–50% – Satisfactory &nbsp;|&nbsp;
+          D 33–40% – Pass &nbsp;|&nbsp; E below 33% – Needs Improvement (Fail)
+        </div>
+      </div>
+
+      ${s.remarks ? `<div class="remarks"><strong>Remarks:</strong> ${s.remarks}</div>` : ''}
+    </div>
+
+    <div class="rc-footer">
+      <div class="note">
+        <div>Printed on: ${new Date().toLocaleDateString('en-IN', { day:'numeric', month:'long', year:'numeric' })}</div>
+        <div style="margin-top:3px">This is a computer-generated result. For any discrepancy, please contact school office.</div>
+      </div>
+      <div class="sig-area">
+        <div class="sig-block"><div class="sig-line"></div><div class="sig-lbl">Class Teacher</div></div>
+        <div class="sig-block"><div class="sig-line"></div><div class="sig-lbl">Head Mistress</div></div>
+        <div class="sig-block"><div class="sig-line" style="width:70px"></div><div class="sig-lbl">School Seal</div></div>
+      </div>
+    </div>`;
+
+  // Auto-trigger print if ?print=1
+  if (params.get('print') === '1') {
+    setTimeout(() => window.print(), 800);
+  }
+})();
+</script>
+</body>
+</html>
