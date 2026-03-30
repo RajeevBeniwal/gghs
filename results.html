@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <title>Results – Govt. Girls High School Kagdana</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    /* Download bar */
+    .download-bar { display:flex; gap:12px; flex-wrap:wrap; margin-bottom:24px; align-items:center; }
+    .download-bar h3 { font-family:'Playfair Display',serif; font-size:1.3rem; color:var(--teal); flex:1; }
+
+    /* Class filter chips */
+    .cls-chips { display:flex; gap:8px; flex-wrap:wrap; }
+    .cls-chip { padding:6px 16px; border-radius:99px; border:2px solid var(--teal); font-size:.74rem; font-weight:700; font-family:'Poppins',sans-serif; cursor:pointer; color:var(--teal); background:transparent; transition:all var(--ease); text-transform:uppercase; letter-spacing:.04em; }
+    .cls-chip.active,.cls-chip:hover { background:var(--teal); color:#fff; }
+
+    /* ── Print-specific A4 layout ── */
+    @media print {
+      @page { size: A4 portrait; margin: 10mm 12mm; }
+      body, .no-print { display: none !important; }
+      #resultCard, #resultCard * { display: revert !important; }
+      #resultCard { display: block !important; font-size: 11pt; box-shadow: none; border: 1px solid #ccc; }
+      .rc-head { background: #0d4f5c !important; -webkit-print-color-adjust: exact; }
+      .rc-head * { color: revert; }
+      table { font-size: 9.5pt; }
+      table thead { background: #0d4f5c !important; -webkit-print-color-adjust: exact; }
+      .result-card-wrap { max-width: 100%; }
+      .rc-meta-grid { grid-template-columns: repeat(3,1fr); }
+      .result-summary-row { grid-template-columns: repeat(4,1fr); }
+      .print-watermark { display: block !important; }
+    }
+
+    /* Watermark (hidden on screen) */
+    .print-watermark { display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%) rotate(-35deg); font-size:80pt; color:rgba(13,79,92,.04); font-family:'Playfair Display',serif; font-weight:800; white-space:nowrap; pointer-events:none; z-index:0; }
+  </style>
+</head>
+<body>
+<div class="topbar no-print" id="siteTopbar"></div>
+<header class="site-header no-print" id="siteHeader"></header>
+<nav class="site-nav no-print" id="siteNav"></nav>
+<div class="ticker no-print" id="siteTicker"></div>
+
+<div class="page-hero no-print">
+  <div class="page-hero-inner">
+    <div class="breadcrumb"><a href="index.html">Home</a><span>/</span><span>Results</span></div>
+    <h1>📊 Annual Examination Results</h1>
+    <p>Search your result by Roll Number or SRN and download as A4</p>
+  </div>
+</div>
+
+<main>
+  <div class="container">
+
+    <!-- TABS -->
+    <div class="tabs no-print">
+      <button class="tab-btn active" data-tab="search">🔍 Search My Result</button>
+      <button class="tab-btn" data-tab="classwise">📋 Class-wise Results</button>
+    </div>
+
+    <!-- TAB 1: SEARCH -->
+    <div class="tab-pane active" id="tab-search">
+
+      <div class="result-search-box no-print">
+        <h2>🔍 Find Your Result</h2>
+        <p class="hint">Enter your Roll Number or SRN to view &amp; download your result</p>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Roll Number / SRN</label>
+            <input type="text" class="form-control" id="rollInput" placeholder="e.g. 2401 or SRN123456" />
+          </div>
+          <div class="form-group">
+            <label>Exam Year (optional)</label>
+            <select class="form-control" id="yearSel">
+              <option value="">All Years</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Class (optional)</label>
+          <select class="form-control" id="classSel">
+            <option value="">All Classes</option>
+            <option>6</option><option>7</option><option>8</option><option>9</option><option>10</option>
+          </select>
+        </div>
+
+        <button class="btn btn-teal btn-block btn-lg" onclick="searchResult()">🔍 Search Result</button>
+        <div id="searchMsg" class="mt-sm"></div>
+      </div>
+
+      <!-- RESULT CARD (A4 printable) -->
+      <div class="result-card-wrap" id="resultWrap" style="display:none">
+        <div class="print-watermark">GGHS KAGDANA</div>
+
+        <div class="download-bar no-print">
+          <h3 id="rcTitle">Result Card</h3>
+          <button class="btn btn-gold" onclick="window.print()">🖨️ Print / Save PDF (A4)</button>
+          <button class="btn btn-outline" onclick="closeResult()">✕ Close</button>
+        </div>
+
+        <div id="resultCard"></div>
+      </div>
+
+    </div>
+
+    <!-- TAB 2: CLASS-WISE -->
+    <div class="tab-pane" id="tab-classwise">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:14px">
+        <div class="cls-chips" id="clsChips"></div>
+        <input type="text" class="form-control" id="cwSearch" placeholder="🔍 Search name, SRN or roll no…" style="max-width:260px" oninput="renderCW()" />
+      </div>
+      <div id="cwTable"></div>
+    </div>
+
+  </div>
+</main>
+
+<footer class="no-print" id="siteFooter"></footer>
+<script src="layout.js"></script>
+<script src="common.js"></script>
+<script>
+// TABS
+document.querySelectorAll('.tab-btn').forEach(b => {
+  b.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(x => x.classList.remove('active'));
+    document.querySelectorAll('.tab-pane').forEach(x => x.classList.remove('active'));
+    b.classList.add('active');
+    document.getElementById('tab-' + b.dataset.tab).classList.add('active');
+    if (b.dataset.tab === 'classwise') initCW();
+  });
+});
+
+const results = DB.get('results', []);
+
+// Populate year filter
+(function() {
+  const years = [...new Set(results.map(r => r.year).filter(Boolean))].sort().reverse();
+  const sel = document.getElementById('yearSel');
+  years.forEach(y => { const o = document.createElement('option'); o.value = y; o.textContent = y; sel.appendChild(o); });
+})();
+
+// ── SEARCH ──
+function searchResult() {
+  const roll = document.getElementById('rollInput').value.trim();
+  const year = document.getElementById('yearSel').value;
+  const cls  = document.getElementById('classSel').value;
+  const msgEl = document.getElementById('searchMsg');
+
+  if (!roll) { msgEl.innerHTML = '<div class="alert alert-warning">⚠️ Please enter a Roll Number or SRN.</div>'; return; }
+
+  let found = results.filter(r =>
+    String(r.rollNo).trim().toLowerCase() === roll.toLowerCase() ||
+    String(r.srn || '').trim().toLowerCase() === roll.toLowerCase()
+  );
+  if (year) found = found.filter(r => String(r.year) === year);
+  if (cls)  found = found.filter(r => String(r.class) === cls);
+
+  if (!found.length) {
+    msgEl.innerHTML = `<div class="alert alert-danger">❌ No result found for <strong>${roll}</strong>. Please verify the Roll Number / SRN and try again.</div>`;
+    document.getElementById('resultWrap').style.display = 'none';
+    return;
+  }
+  msgEl.innerHTML = '';
+  renderResultCard(found[0]);
+}
+document.getElementById('rollInput').addEventListener('keyup', e => { if (e.key === 'Enter') searchResult(); });
+
+// ── RESULT CARD ──
+function renderResultCard(s) {
+  const subs = s.subjects || {};
+  const subKeys = Object.keys(subs);
+  let totalMax = 0, totalObt = 0, failSubs = 0;
+  subKeys.forEach(k => {
+    const mx = Number(subs[k].max || 0);
+    const ob = Number(subs[k].obt || 0);
+    totalMax += mx; totalObt += ob;
+    const subPct = mx ? (ob / mx) * 100 : 0;
+    if (subPct < 33) failSubs++;
+  });
+  const pct = totalMax ? ((totalObt / totalMax) * 100) : 0;
+  const grade = getGrade(pct);
+  const passed = pct >= 33 && failSubs === 0;
+
+  document.getElementById('rcTitle').textContent = `Result – ${s.name} (${s.class ? 'Class ' + s.class : ''})`;
+  document.getElementById('resultWrap').style.display = 'block';
+  document.getElementById('resultWrap').scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  document.getElementById('resultCard').innerHTML = `
+    <!-- HEAD -->
+    <div class="rc-head">
+      <div style="text-align:center;border-bottom:1px solid rgba(255,255,255,.15);padding-bottom:16px;margin-bottom:18px">
+        <div style="font-size:2rem;margin-bottom:6px">🏫</div>
+        <div class="rc-school">Govt. Girls High School Kagdana</div>
+        <div style="font-size:.72rem;color:rgba(255,255,255,.5);margin-top:3px">Tehsil Nathusari Chopta, District Sirsa, Haryana – 125110 · gghs4700kagdana@gmail.com</div>
+        <div style="margin-top:10px;font-size:.7rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--gold-lt)">Annual Examination Result — ${s.year || '____'}</div>
+      </div>
+      <div class="rc-exam">Student Report Card</div>
+      <div class="rc-student-name">${s.name}</div>
+      <div class="rc-meta-grid">
+        <div class="rc-meta-item"><div class="lbl">Roll Number</div><div class="val">${s.rollNo || '—'}</div></div>
+        <div class="rc-meta-item"><div class="lbl">SRN</div><div class="val">${s.srn || '—'}</div></div>
+        <div class="rc-meta-item"><div class="lbl">Class</div><div class="val">${s.class ? 'Class ' + s.class + (s.section ? ' – ' + s.section : '') : '—'}</div></div>
+        <div class="rc-meta-item"><div class="lbl">Date of Birth</div><div class="val">${s.dob ? fmtDate(s.dob, 'long') : '—'}</div></div>
+        <div class="rc-meta-item"><div class="lbl">Father's Name</div><div class="val">${s.fatherName || '—'}</div></div>
+        <div class="rc-meta-item"><div class="lbl">Mother's Name</div><div class="val">${s.motherName || '—'}</div></div>
+      </div>
+    </div>
+
+    <!-- BODY -->
+    <div class="rc-body">
+      <!-- Subject table -->
+      <div class="tbl-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>S.No.</th>
+              <th>Subject</th>
+              <th>Max Marks</th>
+              <th>Marks Obtained</th>
+              <th>Percentage</th>
+              <th>Grade</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${subKeys.map((k, i) => {
+              const mx = Number(subs[k].max || 0);
+              const ob = Number(subs[k].obt || 0);
+              const sp = mx ? ((ob / mx) * 100) : 0;
+              const sg = getGrade(sp);
+              const spas = sp >= 33;
+              return `<tr>
+                <td style="font-weight:700;color:var(--muted)">${i + 1}</td>
+                <td style="font-weight:700">${k}</td>
+                <td style="text-align:center">${mx}</td>
+                <td style="text-align:center;font-weight:800;color:var(--teal)">${ob}</td>
+                <td style="text-align:center">${sp.toFixed(1)}%</td>
+                <td style="text-align:center"><span class="grade ${gradeClass(sg)}">${sg}</span></td>
+                <td style="text-align:center;font-weight:700;color:${spas ? '#117a45' : '#7a0f0f'}">${spas ? '✅ Pass' : '❌ Fail'}</td>
+              </tr>`;
+            }).join('')}
+            <!-- TOTAL ROW -->
+            <tr style="background:var(--gold-xpale)">
+              <td colspan="2" style="font-weight:800;color:var(--teal)">GRAND TOTAL</td>
+              <td style="text-align:center;font-weight:800">${totalMax}</td>
+              <td style="text-align:center;font-weight:800;color:var(--teal)">${totalObt}</td>
+              <td style="text-align:center;font-weight:800">${pct.toFixed(1)}%</td>
+              <td style="text-align:center"><span class="grade ${gradeClass(grade)}">${grade}</span></td>
+              <td style="text-align:center;font-weight:800;color:${passed ? '#117a45' : '#7a0f0f'}">${passed ? '✅ PASS' : '❌ FAIL'}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- SUMMARY -->
+      <div class="result-summary-row">
+        <div class="rs-box">
+          <div class="rs-val">${totalObt} / ${totalMax}</div>
+          <div class="rs-lbl">Marks Obtained</div>
+        </div>
+        <div class="rs-box">
+          <div class="rs-val">${pct.toFixed(1)}%</div>
+          <div class="rs-lbl">Percentage</div>
+        </div>
+        <div class="rs-box">
+          <div class="rs-val"><span class="grade ${gradeClass(grade)}">${grade}</span></div>
+          <div class="rs-lbl">Overall Grade (${gradeLabel(grade)})</div>
+        </div>
+        <div class="rs-box ${passed ? 'pass-box' : 'fail-box'}">
+          <div class="rs-val">${passed ? 'PASS' : 'FAIL'}</div>
+          <div class="rs-lbl">Final Result</div>
+        </div>
+        ${s.position ? `<div class="rs-box"><div class="rs-val">${s.position}</div><div class="rs-lbl">Class Position</div></div>` : ''}
+      </div>
+
+      <!-- GRADE SCALE -->
+      <div style="margin-top:22px;background:var(--gold-xpale);border-radius:var(--rad-sm);padding:14px">
+        <div style="font-size:.72rem;font-weight:700;color:var(--teal);letter-spacing:.06em;text-transform:uppercase;margin-bottom:8px">Grade Scale</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;font-size:.7rem">
+          <span>A1 ≥91% – Outstanding</span> &nbsp;|&nbsp;
+          <span>A2 81–90% – Excellent</span> &nbsp;|&nbsp;
+          <span>B1 71–80% – Very Good</span> &nbsp;|&nbsp;
+          <span>B2 61–70% – Good</span> &nbsp;|&nbsp;
+          <span>C1 51–60% – Average</span> &nbsp;|&nbsp;
+          <span>C2 41–50% – Satisfactory</span> &nbsp;|&nbsp;
+          <span>D 33–40% – Pass</span> &nbsp;|&nbsp;
+          <span>E &lt;33% – Fail</span>
+        </div>
+      </div>
+
+      ${s.remarks ? `<div class="alert alert-info" style="margin-top:16px">💬 <strong>Remarks:</strong> ${s.remarks}</div>` : ''}
+    </div>
+
+    <!-- FOOTER -->
+    <div class="rc-footer">
+      <div>
+        <div style="font-size:.7rem;color:var(--muted)">Printed on: ${new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}</div>
+        <div style="font-size:.7rem;color:var(--muted);margin-top:2px">This is a computer-generated result. For any discrepancy, contact school office.</div>
+      </div>
+      <div style="display:flex;gap:40px">
+        <div class="sig-block">
+          <div class="sig-line"></div>
+          <div style="font-size:.7rem;color:var(--muted)">Class Teacher</div>
+        </div>
+        <div class="sig-block">
+          <div class="sig-line"></div>
+          <div style="font-size:.7rem;color:var(--muted)">Head Mistress</div>
+        </div>
+        <div class="sig-block">
+          <div class="sig-line"></div>
+          <div style="font-size:.7rem;color:var(--muted)">School Seal</div>
+        </div>
+      </div>
+    </div>`;
+}
+
+function closeResult() {
+  document.getElementById('resultWrap').style.display = 'none';
+  document.getElementById('rollInput').value = '';
+  document.getElementById('searchMsg').innerHTML = '';
+}
+
+// ── CLASS-WISE ──
+let cwClass = 'All';
+function initCW() {
+  const classes = ['All', ...new Set(results.map(r => r.class).filter(Boolean)).values()].sort((a,b) => a==='All'?-1:Number(a)-Number(b));
+  const chips = document.getElementById('clsChips');
+  chips.innerHTML = classes.map(c => `<button class="cls-chip ${c===cwClass?'active':''}" data-c="${c}" onclick="setCW('${c}')">${c==='All'?'All Classes':'Class '+c}</button>`).join('');
+  renderCW();
+}
+
+function setCW(c) {
+  cwClass = c;
+  document.querySelectorAll('.cls-chip').forEach(b => b.classList.toggle('active', b.dataset.c === c));
+  renderCW();
+}
+
+function renderCW() {
+  const q = (document.getElementById('cwSearch') || { value: '' }).value.toLowerCase();
+  let data = cwClass === 'All' ? results : results.filter(r => String(r.class) === cwClass);
+  if (q) data = data.filter(r => r.name.toLowerCase().includes(q) || String(r.rollNo).includes(q) || String(r.srn || '').toLowerCase().includes(q));
+
+  const el = document.getElementById('cwTable');
+  if (!data.length) { el.innerHTML = '<div class="alert alert-info">No records found.</div>'; return; }
+
+  el.innerHTML = `
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr>
+          <th>Roll No</th><th>SRN</th><th>Student Name</th><th>Father</th><th>Mother</th><th>Class</th><th>Year</th><th>Total</th><th>%</th><th>Grade</th><th>Result</th><th>Action</th>
+        </tr></thead>
+        <tbody>
+          ${data.map(s => {
+            let mx = 0, ob = 0;
+            Object.values(s.subjects || {}).forEach(v => { mx += Number(v.max || 0); ob += Number(v.obt || 0); });
+            const pc = mx ? ((ob / mx) * 100) : 0;
+            const g = getGrade(pc);
+            const p = pc >= 33;
+            return `<tr>
+              <td><strong>${s.rollNo}</strong></td>
+              <td>${s.srn || '—'}</td>
+              <td style="font-weight:600">${s.name}</td>
+              <td>${s.fatherName || '—'}</td>
+              <td>${s.motherName || '—'}</td>
+              <td>${s.class}${s.section ? ' ('+s.section+')' : ''}</td>
+              <td>${s.year || '—'}</td>
+              <td style="font-weight:700">${ob}/${mx}</td>
+              <td style="font-weight:700">${pc.toFixed(1)}%</td>
+              <td><span class="grade ${gradeClass(g)}">${g}</span></td>
+              <td style="font-weight:700;color:${p?'#117a45':'#7a0f0f'}">${p?'✅ Pass':'❌ Fail'}</td>
+              <td><button class="btn btn-teal btn-sm" onclick="viewCard('${s.rollNo}')">View</button></td>
+            </tr>`;
+          }).join('')}
+        </tbody>
+      </table>
+    </div>
+    <div style="margin-top:8px;font-size:.75rem;color:var(--muted)">${data.length} student(s)</div>`;
+}
+
+function viewCard(roll) {
+  document.querySelectorAll('.tab-btn')[0].click();
+  document.getElementById('rollInput').value = roll;
+  setTimeout(searchResult, 100);
+}
+</script>
+</body>
+</html>

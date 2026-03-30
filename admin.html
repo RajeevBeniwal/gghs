@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <title>Admin Panel – GGHS Kagdana</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <style>
+    body{background:#f0f2f5}
+    /* extra admin styles */
+    .col-map{display:grid;grid-template-columns:1fr 1fr;gap:12px;background:var(--gold-xpale);padding:16px;border-radius:var(--rad-sm);margin:14px 0;border:1px solid rgba(200,150,12,.2)}
+    .col-map-item label{font-size:.75rem;font-weight:600;color:var(--teal);display:block;margin-bottom:4px}
+    .preview-wrap{max-height:380px;overflow:auto;border-radius:var(--rad-sm);border:1px solid var(--border)}
+    .preview-wrap table thead{position:sticky;top:0}
+    .tmpl-btn{background:var(--gold);color:#fff;border:none;padding:9px 20px;border-radius:var(--rad-sm);font-size:.78rem;font-weight:700;cursor:pointer;font-family:'Poppins',sans-serif;display:inline-flex;align-items:center;gap:7px;transition:all var(--ease)}
+    .tmpl-btn:hover{background:#a67a08}
+    .info-pill{background:var(--info-bg);color:var(--info-fg);border:1px solid rgba(13,79,92,.15);border-radius:var(--rad-sm);padding:10px 14px;font-size:.8rem;line-height:1.5}
+    code{background:#f0f0f0;padding:1px 6px;border-radius:4px;font-size:.78rem;font-family:monospace}
+    .pct-bar{height:6px;background:var(--border);border-radius:3px;overflow:hidden;margin-top:6px}
+    .pct-fill{height:100%;background:linear-gradient(90deg,var(--teal),var(--teal-lt));border-radius:3px;transition:width .5s}
+    @media(max-width:768px){.col-map{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+
+<!-- ══════════ LOGIN SCREEN ══════════ -->
+<div id="loginScreen" style="min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(140deg,var(--teal-dk),var(--teal),var(--teal-lt));padding:24px">
+  <div style="background:#fff;border-radius:var(--rad-lg);box-shadow:var(--shadow-lg);padding:44px;width:100%;max-width:400px">
+    <div style="text-align:center;margin-bottom:28px">
+      <div style="font-size:3.5rem;margin-bottom:12px">🔐</div>
+      <div style="font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:800;color:var(--teal);margin-bottom:4px">Admin Portal</div>
+      <div style="font-size:.8rem;color:var(--muted)">Govt. Girls High School Kagdana, Sirsa</div>
+    </div>
+    <div id="loginErr"></div>
+    <div class="form-group">
+      <label>Username</label>
+      <input type="text" class="form-control" id="lUser" value="admin" placeholder="admin" />
+    </div>
+    <div class="form-group">
+      <label>Password</label>
+      <input type="password" class="form-control" id="lPass" placeholder="Enter password" />
+      <div class="form-hint">Default: <strong>admin@gghs123</strong></div>
+    </div>
+    <button class="btn btn-teal btn-block" style="margin-top:8px" onclick="doLogin()">🔓 Login to Admin Panel</button>
+    <div style="margin-top:18px;text-align:center"><a href="index.html" style="color:var(--muted);font-size:.8rem;text-decoration:none">← Back to Website</a></div>
+  </div>
+</div>
+
+<!-- ══════════ ADMIN PANEL ══════════ -->
+<div id="adminPanel" class="hidden">
+<div class="admin-wrap">
+
+  <!-- SIDEBAR -->
+  <aside class="admin-sidebar">
+    <div class="sb-brand">
+      <div class="sb-brand-icon">🏫</div>
+      <div>
+        <div class="sb-brand-name">GGHS Kagdana</div>
+        <div class="sb-brand-sub">Admin Dashboard</div>
+      </div>
+    </div>
+    <nav class="sb-nav" id="sbNav">
+      <div class="sb-section-label">Main</div>
+      <div class="sb-item active" data-p="dashboard"><span class="sb-icon">📊</span> Dashboard</div>
+      <div class="sb-divider"></div>
+      <div class="sb-section-label">Manage</div>
+      <div class="sb-item" data-p="results"><span class="sb-icon">📋</span> Results</div>
+      <div class="sb-item" data-p="activities"><span class="sb-icon">📸</span> Activities</div>
+      <div class="sb-item" data-p="teachers"><span class="sb-icon">👩‍🏫</span> Teachers</div>
+      <div class="sb-divider"></div>
+      <div class="sb-section-label">System</div>
+      <div class="sb-item" data-p="settings"><span class="sb-icon">⚙️</span> Settings</div>
+    </nav>
+    <div class="sb-footer">
+      <button class="btn btn-outline btn-sm btn-block" style="color:rgba(255,255,255,.6);border-color:rgba(255,255,255,.2);font-size:.75rem" onclick="doLogout()">🚪 Logout</button>
+    </div>
+  </aside>
+
+  <!-- MAIN AREA -->
+  <div class="admin-main">
+    <div class="admin-topbar">
+      <h1 id="panelTitle">📊 Dashboard</h1>
+      <div style="display:flex;align-items:center;gap:14px;font-size:.8rem;color:var(--muted)">
+        <span id="adminUser" style="font-weight:600;color:var(--teal)">👤 Administrator</span>
+        <a href="index.html" style="color:var(--teal);text-decoration:none;font-weight:600">🌐 Website</a>
+      </div>
+    </div>
+    <div class="admin-content">
+
+      <!-- ════ DASHBOARD ════ -->
+      <div class="panel active" id="panel-dashboard">
+        <div class="dash-stat-grid" id="dashStats"></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px" id="dashGrid">
+          <div class="a-card">
+            <h3>🚀 Quick Actions</h3>
+            <div style="display:flex;flex-direction:column;gap:10px">
+              <button class="btn btn-teal" onclick="switchPanel('results')">📤 Upload / Manage Results</button>
+              <button class="btn btn-gold" onclick="switchPanel('activities')">➕ Post New Activity</button>
+              <button class="btn btn-outline" onclick="switchPanel('teachers')">👩‍🏫 Add Teacher Profile</button>
+            </div>
+          </div>
+          <div class="a-card">
+            <h3>📢 Recent Activities</h3>
+            <div id="dashActs"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ════ RESULTS ════ -->
+      <div class="panel" id="panel-results">
+
+        <!-- UPLOAD -->
+        <div class="a-card">
+          <h3>📤 Upload Results from Excel</h3>
+
+          <div class="step-flow">
+            <div class="step">
+              <div class="step-num">1</div>
+              <div class="step-content">
+                <h4>Download Excel Template</h4>
+                <p>Use our ready-made template with the correct column headers for 7 subjects.</p>
+                <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px">
+                  <button class="tmpl-btn" onclick="downloadTemplate()">📥 Download Template (.xlsx)</button>
+                  <button class="btn btn-outline btn-sm" onclick="toggleFmtGuide()">📖 Column Guide</button>
+                </div>
+                <div id="fmtGuide" class="hidden" style="margin-top:14px">
+                  <div class="info-pill">
+                    <strong style="display:block;margin-bottom:8px;color:var(--teal)">Required Excel Columns:</strong>
+                    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:6px;font-size:.78rem">
+                      <div><code>RollNo</code> – Roll number</div>
+                      <div><code>SRN</code> – Student Registration No.</div>
+                      <div><code>Name</code> – Full student name</div>
+                      <div><code>FatherName</code> – Father's name</div>
+                      <div><code>MotherName</code> – Mother's name</div>
+                      <div><code>DOB</code> – Date of birth (DD/MM/YYYY)</div>
+                      <div><code>Class</code> – 6 / 7 / 8 / 9 / 10</div>
+                      <div><code>Section</code> – A/B (optional)</div>
+                      <div><code>Year</code> – Exam year e.g. 2024</div>
+                      <div><code>English_Max</code>, <code>English_Obt</code></div>
+                      <div><code>Hindi_Max</code>, <code>Hindi_Obt</code></div>
+                      <div><code>Maths_Max</code>, <code>Maths_Obt</code></div>
+                      <div><code>Science_Max</code>, <code>Science_Obt</code></div>
+                      <div><code>Social_Max</code>, <code>Social_Obt</code></div>
+                      <div><code>Sanskrit_Max</code>, <code>Sanskrit_Obt</code></div>
+                      <div><code>Drawing_Max</code>, <code>Drawing_Obt</code></div>
+                      <div><code>Position</code> – Class rank (optional)</div>
+                      <div><code>Remarks</code> – optional</div>
+                    </div>
+                    <p style="margin-top:10px;color:var(--teal);font-size:.78rem"><strong>Tip:</strong> You can add any extra subject as <code>SubjectName_Max</code> + <code>SubjectName_Obt</code></p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="step">
+              <div class="step-num">2</div>
+              <div class="step-content">
+                <h4>Upload Your Excel File</h4>
+                <p>Supports .xlsx and .xls formats. Drag &amp; drop or click to select.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="upload-zone" id="uploadZone"
+            onclick="document.getElementById('xlFile').click()"
+            ondragover="event.preventDefault();this.classList.add('over')"
+            ondragleave="this.classList.remove('over')"
+            ondrop="handleDrop(event)">
+            <div class="uz-icon">📊</div>
+            <h3>Click or Drag Excel File Here</h3>
+            <p>.xlsx / .xls supported</p>
+            <input type="file" id="xlFile" accept=".xlsx,.xls" class="hidden" onchange="handleFile(event)" />
+          </div>
+          <div id="uploadMsg" class="mt-sm"></div>
+
+          <!-- PREVIEW -->
+          <div id="previewSec" class="hidden" style="margin-top:24px">
+            <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:14px">
+              <div style="font-family:'Playfair Display',serif;font-size:1.2rem;color:var(--teal)">
+                Preview – <span id="prevCount">0</span> students
+              </div>
+              <div style="display:flex;gap:10px;flex-wrap:wrap">
+                <button class="btn btn-outline btn-sm" onclick="clearPreview()">✕ Clear</button>
+                <button class="btn btn-teal" onclick="saveResults()">💾 Save to Database</button>
+              </div>
+            </div>
+            <div class="preview-wrap">
+              <table>
+                <thead><tr id="prevHead"></tr></thead>
+                <tbody id="prevBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- MANAGE EXISTING -->
+        <div class="a-card">
+          <h3>🗃️ Manage Result Records</h3>
+          <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px;align-items:center">
+            <input type="text" class="form-control" id="rSearch" placeholder="Search name, roll, SRN…" style="max-width:280px" oninput="renderResTable()" />
+            <select class="form-control" id="rClass" style="max-width:160px" onchange="renderResTable()">
+              <option value="">All Classes</option>
+            </select>
+            <select class="form-control" id="rYear" style="max-width:140px" onchange="renderResTable()">
+              <option value="">All Years</option>
+            </select>
+            <button class="btn btn-danger btn-sm" onclick="clearAllResults()">🗑️ Clear All</button>
+          </div>
+          <div id="resTable"></div>
+        </div>
+      </div>
+
+      <!-- ════ ACTIVITIES ════ -->
+      <div class="panel" id="panel-activities">
+        <div class="a-card">
+          <h3>➕ Post New Activity / Notice</h3>
+          <div class="form-row">
+            <div class="form-group"><label>Title *</label><input type="text" class="form-control" id="aTitle" placeholder="e.g. Annual Sports Day 2024" /></div>
+            <div class="form-group"><label>Category *</label>
+              <select class="form-control" id="aCat">
+                <option>Notice</option><option>Event</option><option>Academic</option><option>Sports</option><option>Cultural</option><option>Award</option><option>Other</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label>Date *</label><input type="date" class="form-control" id="aDate" /></div>
+            <div class="form-group"><label>Photo (optional)</label><input type="file" class="form-control" id="aPhoto" accept="image/*" /></div>
+          </div>
+          <div class="form-group"><label>Description *</label><textarea class="form-control" id="aDesc" placeholder="Write a detailed description of the activity or notice…"></textarea></div>
+          <div id="aMsg"></div>
+          <button class="btn btn-gold" onclick="postActivity()">📌 Post Activity</button>
+        </div>
+
+        <div class="a-card">
+          <h3>📋 All Activities (<span id="aCount">0</span>)</h3>
+          <div id="actList"></div>
+        </div>
+      </div>
+
+      <!-- ════ TEACHERS ════ -->
+      <div class="panel" id="panel-teachers">
+        <div class="a-card">
+          <h3 id="tcFormTitle">➕ Add Teacher Profile</h3>
+          <input type="hidden" id="tcEditId" />
+          <div class="form-row">
+            <div class="form-group"><label>Full Name *</label><input type="text" class="form-control" id="tcName" placeholder="Mrs. Sunita Devi" /></div>
+            <div class="form-group"><label>Designation *</label>
+              <select class="form-control" id="tcDesig">
+                <option>Headmistress / Principal</option>
+                <option>Senior Teacher (PGT)</option>
+                <option>TGT Teacher</option>
+                <option>JBT Teacher</option>
+                <option>English Teacher</option>
+                <option>Hindi Teacher</option>
+                <option>Maths Teacher</option>
+                <option>Science Teacher</option>
+                <option>Social Studies Teacher</option>
+                <option>Sanskrit Teacher</option>
+                <option>Computer Teacher</option>
+                <option>Drawing / Art Teacher</option>
+                <option>Physical Education</option>
+                <option>Other Staff</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label>Subject(s) Taught</label><input type="text" class="form-control" id="tcSub" placeholder="Maths, Science" /></div>
+            <div class="form-group"><label>Qualification</label><input type="text" class="form-control" id="tcQual" placeholder="M.Sc., B.Ed." /></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label>Experience (years)</label><input type="number" class="form-control" id="tcExp" placeholder="8" /></div>
+            <div class="form-group"><label>Phone (optional)</label><input type="text" class="form-control" id="tcPhone" placeholder="98XXXXXXXX" /></div>
+          </div>
+          <div class="form-group"><label>Profile Photo (optional)</label><input type="file" class="form-control" id="tcPhoto" accept="image/*" /></div>
+          <div id="tcMsg"></div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap">
+            <button class="btn btn-teal" onclick="saveTeacher()">💾 Save Profile</button>
+            <button class="btn btn-outline" onclick="resetTcForm()">✕ Cancel</button>
+          </div>
+        </div>
+
+        <div class="a-card">
+          <h3>👩‍🏫 All Teachers (<span id="tcCount">0</span>)</h3>
+          <div id="tcList"></div>
+        </div>
+      </div>
+
+      <!-- ════ SETTINGS ════ -->
+      <div class="panel" id="panel-settings">
+        <div class="a-card" style="max-width:480px">
+          <h3>🔒 Change Password</h3>
+          <div class="form-group"><label>Current Password</label><input type="password" class="form-control" id="sCur" /></div>
+          <div class="form-group"><label>New Password (min 6 chars)</label><input type="password" class="form-control" id="sNew" /></div>
+          <div class="form-group"><label>Confirm New Password</label><input type="password" class="form-control" id="sConf" /></div>
+          <div id="sMsg"></div>
+          <button class="btn btn-teal" onclick="changePass()">🔐 Update Password</button>
+        </div>
+        <div class="a-card" style="max-width:480px">
+          <h3>🗂️ Backup &amp; Restore Data</h3>
+          <p style="font-size:.85rem;color:var(--muted);margin-bottom:18px">Export all data as JSON for backup. Import to restore on another device.</p>
+          <div style="display:flex;gap:12px;flex-wrap:wrap">
+            <button class="btn btn-outline" onclick="exportData()">📤 Export Backup (JSON)</button>
+            <button class="btn btn-gold" onclick="importPrompt()">📥 Import Backup (JSON)</button>
+          </div>
+        </div>
+        <div class="a-card" style="max-width:480px">
+          <h3>⚠️ Danger Zone</h3>
+          <div style="display:flex;flex-direction:column;gap:10px">
+            <button class="btn btn-danger btn-sm" onclick="clearAllResults()">🗑️ Delete All Results</button>
+            <button class="btn btn-danger btn-sm" onclick="clearAll('teachers')">🗑️ Delete All Teachers</button>
+            <button class="btn btn-danger btn-sm" onclick="clearAll('activities')">🗑️ Delete All Activities</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+</div><!-- adminPanel -->
+
+<script src="common.js"></script>
+<script>
+/* ═══════════════ AUTH ═══════════════ */
+const PASS_KEY = 'gghs_admin_pw';
+const getAdminPass = () => localStorage.getItem(PASS_KEY) || 'admin@gghs123';
+
+function doLogin() {
+  const u = document.getElementById('lUser').value.trim();
+  const p = document.getElementById('lPass').value;
+  if (u === 'admin' && p === getAdminPass()) {
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('adminPanel').classList.remove('hidden');
+    initAdmin();
+  } else {
+    document.getElementById('loginErr').innerHTML = '<div class="alert alert-danger">❌ Incorrect username or password.</div>';
+  }
+}
+document.addEventListener('DOMContentLoaded', () => {
+  const lp = document.getElementById('lPass');
+  if (lp) lp.addEventListener('keyup', e => { if (e.key === 'Enter') doLogin(); });
+});
+function doLogout() {
+  document.getElementById('adminPanel').classList.add('hidden');
+  document.getElementById('loginScreen').style.display = '';
+  document.getElementById('lPass').value = '';
+  document.getElementById('loginErr').innerHTML = '';
+}
+
+/* ═══════════════ PANEL SWITCH ═══════════════ */
+const PT = { dashboard:'📊 Dashboard', results:'📋 Manage Results', activities:'📸 Activities & Notices', teachers:'👩‍🏫 Teacher Profiles', settings:'⚙️ Settings' };
+function switchPanel(id) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.sb-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('panel-'+id).classList.add('active');
+  const si = document.querySelector(`[data-p="${id}"]`);
+  if (si) si.classList.add('active');
+  document.getElementById('panelTitle').textContent = PT[id] || id;
+  if (id === 'results') { populateResFilters(); renderResTable(); }
+  if (id === 'dashboard') loadDash();
+}
+document.getElementById('sbNav').addEventListener('click', e => {
+  const item = e.target.closest('.sb-item');
+  if (item && item.dataset.p) switchPanel(item.dataset.p);
+});
+
+/* ═══════════════ INIT ═══════════════ */
+function initAdmin() {
+  document.getElementById('aDate').valueAsDate = new Date();
+  loadDash(); renderActivityList(); renderTeacherList(); renderResTable(); populateResFilters();
+}
+
+/* ═══════════════ DASHBOARD ═══════════════ */
+function loadDash() {
+  const r = DB.get('results', []);
+  const t = DB.get('teachers', []);
+  const a = DB.get('activities', []);
+  const uniq = new Set(r.map(s => s.srn || s.rollNo)).size;
+  document.getElementById('dashStats').innerHTML = `
+    <div class="dash-stat"><span class="ds-icon">👩‍🎓</span><div><div class="ds-num">${uniq||0}</div><div class="ds-lbl">Students</div></div></div>
+    <div class="dash-stat gold"><span class="ds-icon">👩‍🏫</span><div><div class="ds-num">${t.length}</div><div class="ds-lbl">Teachers</div></div></div>
+    <div class="dash-stat green"><span class="ds-icon">📌</span><div><div class="ds-num">${a.length}</div><div class="ds-lbl">Activities</div></div></div>
+    <div class="dash-stat red"><span class="ds-icon">📋</span><div><div class="ds-num">${r.length}</div><div class="ds-lbl">Result Records</div></div></div>`;
+  const da = document.getElementById('dashActs');
+  if (!a.length) { da.innerHTML = '<p style="color:var(--muted);font-size:.85rem">No activities yet.</p>'; return; }
+  da.innerHTML = a.slice(0,5).map(x => `
+    <div style="display:flex;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);align-items:center">
+      <span style="font-size:1.2rem">📌</span>
+      <div style="flex:1"><div style="font-weight:700;font-size:.85rem">${x.title}</div>
+      <div style="font-size:.72rem;color:var(--muted)">${x.category} · ${fmtDate(x.date)}</div></div>
+    </div>`).join('');
+  const dg = document.getElementById('dashGrid');
+  if (window.innerWidth < 768 && dg) dg.style.gridTemplateColumns = '1fr';
+}
+
+/* ═══════════════ RESULTS UPLOAD ═══════════════ */
+let parsedRows = [];
+
+function toggleFmtGuide() { document.getElementById('fmtGuide').classList.toggle('hidden'); }
+
+const DEFAULT_SUBJECTS = ['English','Hindi','Maths','Science','Social','Sanskrit','Drawing'];
+
+function downloadTemplate() {
+  const wb = XLSX.utils.book_new();
+  const hdr = [
+    'RollNo','SRN','Name','FatherName','MotherName','DOB','Class','Section','Year',
+    ...DEFAULT_SUBJECTS.flatMap(s => [s+'_Max', s+'_Obt']),
+    'Position','Remarks'
+  ];
+  const sampleRow = [
+    '2401','HR123456','Priya Kumari','Rajesh Kumar','Sunita Devi','15/08/2010',
+    '9','A','2024',
+    100,78, 100,82, 100,75, 100,69, 100,88, 100,71, 100,65,
+    '3','Good performance'
+  ];
+  const ws = XLSX.utils.aoa_to_sheet([hdr, sampleRow]);
+  ws['!cols'] = hdr.map(() => ({ wch: 16 }));
+  XLSX.utils.book_append_sheet(wb, ws, 'Results');
+  XLSX.writeFile(wb, 'GGHS_Result_Template_2024.xlsx');
+  toast('Template downloaded!');
+}
+
+function handleDrop(e) {
+  e.preventDefault();
+  document.getElementById('uploadZone').classList.remove('over');
+  const f = e.dataTransfer.files[0];
+  if (f) processXL(f);
+}
+function handleFile(e) { const f = e.target.files[0]; if (f) processXL(f); }
+
+function processXL(file) {
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const wb = XLSX.read(e.target.result, { type: 'binary', cellDates: true });
+      const ws = wb.Sheets[wb.SheetNames[0]];
+      const raw = XLSX.utils.sheet_to_json(ws, { defval: '' });
+      if (!raw.length) { showMsg('uploadMsg','Excel file appears empty.','danger'); return; }
+      parsedRows = parseRows(raw);
+      showPreview(parsedRows);
+      showMsg('uploadMsg', `✅ Read ${parsedRows.length} student record(s) successfully.`, 'success');
+    } catch(err) { showMsg('uploadMsg', '❌ Error reading file: ' + err.message, 'danger'); }
+  };
+  reader.readAsBinaryString(file);
+}
+
+function parseRows(raw) {
+  return raw.map(row => {
+    const subjects = {};
+    const fixed = new Set(['RollNo','SRN','Name','FatherName','MotherName','DOB','Class','Section','Year','Position','Remarks']);
+    Object.keys(row).forEach(k => {
+      if (fixed.has(k)) return;
+      const parts = k.split('_');
+      if (parts.length < 2) return;
+      const subName = parts.slice(0, -1).join(' ');
+      const type = parts[parts.length - 1].toLowerCase();
+      if (!subjects[subName]) subjects[subName] = { max: 100, obt: 0 };
+      if (type === 'max') subjects[subName].max = Number(row[k]) || 100;
+      if (type === 'obt') subjects[subName].obt = Number(row[k]) || 0;
+    });
+    // Parse DOB
+    let dob = String(row['DOB'] || '').trim();
+    if (row['DOB'] instanceof Date) {
+      dob = row['DOB'].toISOString().split('T')[0];
+    } else if (dob.includes('/')) {
+      const p = dob.split('/');
+      if (p.length === 3) dob = `${p[2].padStart(4,'20')}-${p[1].padStart(2,'0')}-${p[0].padStart(2,'0')}`;
+    }
+    return {
+      id: genId('r'),
+      rollNo: String(row['RollNo'] || '').trim(),
+      srn: String(row['SRN'] || '').trim(),
+      name: String(row['Name'] || '').trim(),
+      fatherName: String(row['FatherName'] || '').trim(),
+      motherName: String(row['MotherName'] || '').trim(),
+      dob,
+      class: String(row['Class'] || '').trim(),
+      section: String(row['Section'] || '').trim(),
+      year: String(row['Year'] || '').trim(),
+      position: String(row['Position'] || '').trim(),
+      remarks: String(row['Remarks'] || '').trim(),
+      subjects
+    };
+  }).filter(r => r.rollNo && r.name);
+}
+
+function showPreview(data) {
+  if (!data.length) return;
+  document.getElementById('previewSec').classList.remove('hidden');
+  document.getElementById('prevCount').textContent = data.length;
+  // Collect subject names
+  const allSubs = new Set();
+  data.forEach(r => Object.keys(r.subjects).forEach(s => allSubs.add(s)));
+  const subs = [...allSubs];
+  document.getElementById('prevHead').innerHTML =
+    ['Roll No','SRN','Name','Father','Mother','DOB','Class','Year',...subs.map(s=>s+' (Obt)'),'Total','%'].map(h=>`<th>${h}</th>`).join('');
+  document.getElementById('prevBody').innerHTML = data.map(s => {
+    let mx=0,ob=0; Object.values(s.subjects).forEach(v=>{mx+=Number(v.max||0);ob+=Number(v.obt||0);});
+    const pct = mx?(ob/mx*100).toFixed(1):0;
+    return `<tr>
+      <td>${s.rollNo}</td><td>${s.srn||'—'}</td><td>${s.name}</td><td>${s.fatherName||'—'}</td>
+      <td>${s.motherName||'—'}</td><td>${s.dob||'—'}</td><td>${s.class}</td><td>${s.year}</td>
+      ${subs.map(k=>`<td>${s.subjects[k]?s.subjects[k].obt:'—'}</td>`).join('')}
+      <td>${ob}/${mx}</td><td>${pct}%</td>
+    </tr>`;
+  }).join('');
+}
+
+function clearPreview() {
+  parsedRows=[];
+  document.getElementById('previewSec').classList.add('hidden');
+  document.getElementById('xlFile').value='';
+  document.getElementById('uploadMsg').innerHTML='';
+}
+
+function saveResults() {
+  if (!parsedRows.length) return;
+  const exist = DB.get('results',[]);
+  const filtered = exist.filter(e => !parsedRows.some(n => n.rollNo===e.rollNo && n.year===e.year));
+  DB.set('results', [...filtered, ...parsedRows]);
+  toast(`✅ ${parsedRows.length} results saved!`,'success');
+  clearPreview();
+  populateResFilters(); renderResTable(); loadDash();
+}
+
+function populateResFilters() {
+  const all = DB.get('results',[]);
+  const classes = [...new Set(all.map(r=>r.class).filter(Boolean))].sort((a,b)=>Number(a)-Number(b));
+  const years   = [...new Set(all.map(r=>r.year).filter(Boolean))].sort().reverse();
+  document.getElementById('rClass').innerHTML = '<option value="">All Classes</option>' + classes.map(c=>`<option value="${c}">Class ${c}</option>`).join('');
+  document.getElementById('rYear').innerHTML  = '<option value="">All Years</option>'   + years.map(y=>`<option value="${y}">${y}</option>`).join('');
+}
+
+function renderResTable() {
+  const all = DB.get('results',[]);
+  const q   = (document.getElementById('rSearch')||{value:''}).value.toLowerCase();
+  const cls = (document.getElementById('rClass')||{value:''}).value;
+  const yr  = (document.getElementById('rYear')||{value:''}).value;
+  let data = all;
+  if (q)   data = data.filter(r => r.name.toLowerCase().includes(q)||String(r.rollNo).includes(q)||String(r.srn||'').toLowerCase().includes(q));
+  if (cls) data = data.filter(r => r.class===cls);
+  if (yr)  data = data.filter(r => r.year===yr);
+  const el = document.getElementById('resTable');
+  if (!data.length){ el.innerHTML='<div class="alert alert-info">No records found.</div>'; return; }
+  el.innerHTML = `
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Roll No</th><th>SRN</th><th>Name</th><th>Father</th><th>Class</th><th>Year</th><th>%</th><th>Actions</th></tr></thead>
+        <tbody>${data.map(s=>{
+          let mx=0,ob=0; Object.values(s.subjects||{}).forEach(v=>{mx+=Number(v.max||0);ob+=Number(v.obt||0);});
+          const pc = mx?(ob/mx*100).toFixed(1):0;
+          return `<tr>
+            <td><strong>${s.rollNo}</strong></td><td>${s.srn||'—'}</td><td>${s.name}</td><td>${s.fatherName||'—'}</td>
+            <td>${s.class}</td><td>${s.year}</td><td>${pc}%</td>
+            <td><button class="btn btn-danger btn-sm" onclick="delResult('${s.id}')">🗑️</button></td>
+          </tr>`;
+        }).join('')}</tbody>
+      </table>
+    </div>
+    <div style="margin-top:8px;font-size:.75rem;color:var(--muted)">${data.length} record(s)</div>`;
+}
+
+function delResult(id) {
+  if (!confirmDel('Delete this result record?')) return;
+  DB.set('results', DB.get('results',[]).filter(r=>r.id!==id));
+  renderResTable(); loadDash(); toast('Record deleted.','info');
+}
+
+function clearAllResults() {
+  if (!confirmDel('⚠️ This will DELETE ALL result records permanently!')) return;
+  DB.set('results',[]);
+  populateResFilters(); renderResTable(); loadDash();
+  toast('All results cleared.','warning');
+}
+
+/* ═══════════════ ACTIVITIES ═══════════════ */
+function postActivity() {
+  const title = document.getElementById('aTitle').value.trim();
+  const cat   = document.getElementById('aCat').value;
+  const date  = document.getElementById('aDate').value;
+  const desc  = document.getElementById('aDesc').value.trim();
+  const photo = document.getElementById('aPhoto').files[0];
+  if (!title||!date||!desc) { showMsg('aMsg','Please fill all required fields.','danger'); return; }
+
+  const proceed = (img) => {
+    const acts = DB.get('activities',[]);
+    acts.unshift({ id:genId('a'), title, category:cat, date, description:desc, image:img||null });
+    DB.set('activities', acts);
+    showMsg('aMsg','✅ Activity posted!','success');
+    document.getElementById('aTitle').value='';
+    document.getElementById('aDesc').value='';
+    document.getElementById('aPhoto').value='';
+    renderActivityList(); loadDash(); toast('Activity posted!','success');
+  };
+  if (photo) { const r=new FileReader(); r.onload=e=>proceed(e.target.result); r.readAsDataURL(photo); }
+  else proceed(null);
+}
+
+function renderActivityList() {
+  const acts = DB.get('activities',[]);
+  document.getElementById('aCount').textContent = acts.length;
+  const el = document.getElementById('actList');
+  if (!acts.length) { el.innerHTML='<div class="empty-state"><div class="es-icon">📭</div><h4>No Activities</h4><p>Post your first activity above.</p></div>'; return; }
+  el.innerHTML = acts.map(a => `
+    <div class="list-row">
+      <div class="lr-icon">${a.image?`<img src="${a.image}" alt="" />`:'📌'}</div>
+      <div class="lr-info">
+        <div class="lr-title">${a.title}</div>
+        <div class="lr-sub">${a.category} · ${fmtDate(a.date)}</div>
+        <div style="font-size:.76rem;color:var(--muted);margin-top:3px">${a.description.substring(0,80)}…</div>
+      </div>
+      <div class="lr-actions">
+        <button class="btn btn-danger btn-sm" onclick="delActivity('${a.id}')">🗑️</button>
+      </div>
+    </div>`).join('');
+}
+
+function delActivity(id) {
+  if (!confirmDel('Delete this activity?')) return;
+  DB.set('activities', DB.get('activities',[]).filter(a=>a.id!==id));
+  renderActivityList(); loadDash(); toast('Deleted.','info');
+}
+
+/* ═══════════════ TEACHERS ═══════════════ */
+function saveTeacher() {
+  const name  = document.getElementById('tcName').value.trim();
+  const desig = document.getElementById('tcDesig').value;
+  const sub   = document.getElementById('tcSub').value.trim();
+  const qual  = document.getElementById('tcQual').value.trim();
+  const exp   = document.getElementById('tcExp').value.trim();
+  const phone = document.getElementById('tcPhone').value.trim();
+  const photo = document.getElementById('tcPhoto').files[0];
+  const eid   = document.getElementById('tcEditId').value;
+  if (!name) { showMsg('tcMsg','Please enter the teacher name.','danger'); return; }
+
+  const proceed = (img) => {
+    const list = DB.get('teachers',[]);
+    const obj = { id: eid||genId('t'), name, designation:desig, subject:sub, qualification:qual, experience:exp, phone, photo:img };
+    if (eid) {
+      const idx = list.findIndex(x=>x.id===eid);
+      if (idx>=0) { if(!img && list[idx].photo) obj.photo=list[idx].photo; list[idx]=obj; }
+    } else { list.push(obj); }
+    DB.set('teachers', list);
+    showMsg('tcMsg','✅ Teacher saved!','success');
+    resetTcForm(); renderTeacherList(); loadDash(); toast('Teacher saved!','success');
+  };
+  if (photo) { const r=new FileReader(); r.onload=e=>proceed(e.target.result); r.readAsDataURL(photo); }
+  else proceed(null);
+}
+
+function resetTcForm() {
+  ['tcEditId','tcName','tcSub','tcQual','tcExp','tcPhone'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('tcPhoto').value='';
+  document.getElementById('tcFormTitle').textContent='➕ Add Teacher Profile';
+  document.getElementById('tcMsg').innerHTML='';
+}
+
+function editTeacher(id) {
+  const t = DB.get('teachers',[]).find(x=>x.id===id); if (!t) return;
+  document.getElementById('tcEditId').value=t.id;
+  document.getElementById('tcName').value=t.name||'';
+  document.getElementById('tcDesig').value=t.designation||'';
+  document.getElementById('tcSub').value=t.subject||'';
+  document.getElementById('tcQual').value=t.qualification||'';
+  document.getElementById('tcExp').value=t.experience||'';
+  document.getElementById('tcPhone').value=t.phone||'';
+  document.getElementById('tcFormTitle').textContent='✏️ Edit Teacher Profile';
+  document.getElementById('panel-teachers').querySelector('.a-card').scrollIntoView({behavior:'smooth'});
+}
+
+function delTeacher(id) {
+  if (!confirmDel('Delete this teacher profile?')) return;
+  DB.set('teachers', DB.get('teachers',[]).filter(t=>t.id!==id));
+  renderTeacherList(); loadDash(); toast('Deleted.','info');
+}
+
+function renderTeacherList() {
+  const list = DB.get('teachers',[]);
+  document.getElementById('tcCount').textContent = list.length;
+  const el = document.getElementById('tcList');
+  if (!list.length) { el.innerHTML='<div class="empty-state"><div class="es-icon">👩‍🏫</div><h4>No Teachers Yet</h4></div>'; return; }
+  el.innerHTML = list.map(t => `
+    <div class="list-row">
+      <div class="lr-icon">${t.photo?`<img src="${t.photo}" alt="${t.name}" />`:'👩‍🏫'}</div>
+      <div class="lr-info">
+        <div class="lr-title">${t.name}</div>
+        <div class="lr-sub">${t.designation||''} ${t.subject?'· '+t.subject:''}</div>
+      </div>
+      <div class="lr-actions">
+        <button class="btn btn-outline btn-sm" onclick="editTeacher('${t.id}')">✏️ Edit</button>
+        <button class="btn btn-danger btn-sm" onclick="delTeacher('${t.id}')">🗑️</button>
+      </div>
+    </div>`).join('');
+}
+
+/* ═══════════════ SETTINGS ═══════════════ */
+function changePass() {
+  const cur  = document.getElementById('sCur').value;
+  const nwp  = document.getElementById('sNew').value;
+  const conf = document.getElementById('sConf').value;
+  if (cur !== getAdminPass()) { showMsg('sMsg','❌ Current password incorrect.','danger'); return; }
+  if (nwp.length < 6)         { showMsg('sMsg','❌ Password must be at least 6 characters.','danger'); return; }
+  if (nwp !== conf)           { showMsg('sMsg','❌ Passwords do not match.','danger'); return; }
+  localStorage.setItem(PASS_KEY, nwp);
+  showMsg('sMsg','✅ Password changed successfully!','success');
+  ['sCur','sNew','sConf'].forEach(id=>document.getElementById(id).value='');
+}
+
+function exportData() {
+  const data = { results:DB.get('results',[]), activities:DB.get('activities',[]), teachers:DB.get('teachers',[]), exportDate: new Date().toISOString() };
+  const blob = new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  const a = document.createElement('a'); a.href=URL.createObjectURL(blob);
+  a.download='GGHS_Backup_'+new Date().toISOString().split('T')[0]+'.json'; a.click();
+  toast('Backup exported!','success');
+}
+
+function importPrompt() {
+  const inp = document.createElement('input'); inp.type='file'; inp.accept='.json';
+  inp.onchange = e => {
+    const f = e.target.files[0]; if (!f) return;
+    const r = new FileReader();
+    r.onload = ev => {
+      try {
+        const d = JSON.parse(ev.target.result);
+        if (d.results)    DB.set('results', d.results);
+        if (d.activities) DB.set('activities', d.activities);
+        if (d.teachers)   DB.set('teachers', d.teachers);
+        toast('Data imported successfully!','success');
+        initAdmin();
+      } catch { toast('Invalid JSON file.','danger'); }
+    };
+    r.readAsText(f);
+  };
+  inp.click();
+}
+
+function clearAll(key) {
+  if (!confirmDel(`Delete ALL ${key}?`)) return;
+  DB.set(key,[]);
+  if (key==='results') { populateResFilters(); renderResTable(); }
+  if (key==='teachers') renderTeacherList();
+  if (key==='activities') renderActivityList();
+  loadDash();
+  toast(`All ${key} cleared.`,'warning');
+}
+
+/* ═══════════════ UTILITY ═══════════════ */
+function showMsg(id, msg, type) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.innerHTML = `<div class="alert alert-${type}">${msg}</div>`;
+  setTimeout(() => { if(el) el.innerHTML=''; }, 4000);
+}
+</script>
+</body>
+</html>

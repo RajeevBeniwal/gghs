@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <title>Teachers – Govt. Girls High School Kagdana</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .search-bar { display:flex; gap:12px; margin-bottom:32px; flex-wrap:wrap; }
+    .search-bar input { flex:1; min-width:200px; }
+    .head-spotlight { background:linear-gradient(135deg,var(--teal-dk),var(--teal)); border-radius:var(--rad-lg); padding:32px; color:#fff; display:flex; gap:28px; align-items:center; margin-bottom:40px; flex-wrap:wrap; }
+    .hs-avatar { width:110px; height:110px; border-radius:50%; background:var(--gold-pale); display:flex; align-items:center; justify-content:center; font-size:3rem; border:4px solid var(--gold); flex-shrink:0; overflow:hidden; box-shadow:0 0 0 8px rgba(200,150,12,.2); }
+    .hs-avatar img { width:100%; height:100%; object-fit:cover; }
+    .hs-info .title { font-size:.68rem; font-weight:800; letter-spacing:.12em; text-transform:uppercase; color:var(--gold-lt); margin-bottom:6px; }
+    .hs-info .name { font-family:'Playfair Display',serif; font-size:1.9rem; font-weight:800; margin-bottom:6px; }
+    .hs-info .role { color:var(--gold-lt); font-weight:600; margin-bottom:12px; }
+    .hs-info .metas { display:flex; gap:18px; flex-wrap:wrap; }
+    .hs-info .metas span { font-size:.8rem; color:rgba(255,255,255,.7); }
+  </style>
+</head>
+<body>
+<div class="topbar" id="siteTopbar"></div>
+<header class="site-header" id="siteHeader"></header>
+<nav class="site-nav" id="siteNav"></nav>
+<div class="ticker" id="siteTicker"></div>
+
+<div class="page-hero">
+  <div class="page-hero-inner">
+    <div class="breadcrumb"><a href="index.html">Home</a><span>/</span><span>Teachers</span></div>
+    <h1>👩‍🏫 Our Faculty</h1>
+    <p>Meet the dedicated and qualified educators of GGHS Kagdana</p>
+  </div>
+</div>
+
+<main>
+  <div class="container">
+
+    <!-- HEAD SPOTLIGHT -->
+    <div id="headSpotlight" class="hidden"></div>
+
+    <!-- SEARCH -->
+    <div class="search-bar">
+      <input type="text" class="form-control" id="tcSearch" placeholder="🔍 Search teacher by name or subject…" oninput="filterTeachers()" />
+    </div>
+
+    <!-- GRID -->
+    <div class="grid-4" id="tcGrid"></div>
+
+  </div>
+</main>
+
+<footer id="siteFooter"></footer>
+<script src="layout.js"></script>
+<script src="common.js"></script>
+<script>
+let allTeachers = [];
+
+function isHead(t) {
+  const d = (t.designation || '').toLowerCase();
+  return d.includes('principal') || d.includes('headmistress') || d.includes('head mistress') || d.includes('incharge');
+}
+
+function renderHead(teachers) {
+  const head = teachers.find(isHead);
+  const spot = document.getElementById('headSpotlight');
+  if (!head) { spot.classList.add('hidden'); return; }
+  spot.classList.remove('hidden');
+  spot.innerHTML = `
+    <div class="head-spotlight">
+      <div class="hs-avatar">${head.photo ? `<img src="${head.photo}" alt="${head.name}" />` : '👩‍🏫'}</div>
+      <div class="hs-info">
+        <div class="title">⭐ School Head</div>
+        <div class="name">${head.name}</div>
+        <div class="role">${head.designation}${head.subject ? ' · ' + head.subject : ''}</div>
+        <div class="metas">
+          ${head.qualification ? `<span>🎓 ${head.qualification}</span>` : ''}
+          ${head.experience ? `<span>⏱️ ${head.experience} yrs</span>` : ''}
+          ${head.phone ? `<span>📞 ${head.phone}</span>` : ''}
+        </div>
+      </div>
+    </div>`;
+}
+
+function tcCard(t) {
+  return `
+    <div class="teacher-card">
+      <div class="tc-banner">
+        ${isHead(t) ? '<div class="tc-head-badge">⭐ Head</div>' : ''}
+        <div class="tc-avatar">${t.photo ? `<img src="${t.photo}" alt="${t.name}" />` : '👩‍🏫'}</div>
+      </div>
+      <div class="tc-body">
+        <div class="tc-name">${t.name}</div>
+        <div class="tc-role">${t.designation || 'Teacher'}</div>
+        <div class="tc-meta">
+          ${t.subject ? `<div class="tc-meta-row"><span class="icon">📖</span><span>${t.subject}</span></div>` : ''}
+          ${t.qualification ? `<div class="tc-meta-row"><span class="icon">🎓</span><span>${t.qualification}</span></div>` : ''}
+          ${t.experience ? `<div class="tc-meta-row"><span class="icon">⏱️</span><span>${t.experience} years experience</span></div>` : ''}
+          ${t.phone ? `<div class="tc-meta-row"><span class="icon">📞</span><span>${t.phone}</span></div>` : ''}
+        </div>
+      </div>
+    </div>`;
+}
+
+function renderTeachers(list) {
+  const grid = document.getElementById('tcGrid');
+  const heads = list.filter(isHead);
+  const others = list.filter(t => !isHead(t));
+  renderHead(heads);
+  if (!others.length && !heads.length) {
+    grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1">
+      <div class="es-icon">👩‍🏫</div><h4>No Teacher Profiles Yet</h4>
+      <p>Teacher profiles will appear here once added by the admin.</p></div>`;
+    return;
+  }
+  grid.innerHTML = (heads.length && !document.getElementById('headSpotlight').classList.contains('hidden') ? [] : heads.map(tcCard))
+    .concat(others.map(tcCard)).join('');
+}
+
+function filterTeachers() {
+  const q = document.getElementById('tcSearch').value.toLowerCase();
+  const filtered = allTeachers.filter(t =>
+    t.name.toLowerCase().includes(q) ||
+    (t.subject || '').toLowerCase().includes(q) ||
+    (t.designation || '').toLowerCase().includes(q)
+  );
+  renderTeachers(filtered);
+}
+
+allTeachers = DB.get('teachers', []);
+renderTeachers(allTeachers);
+</script>
+</body>
+</html>

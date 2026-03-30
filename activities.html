@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <title>Activities – Govt. Girls High School Kagdana</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .filter-row { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:32px; }
+    .filt-btn { padding:8px 20px; border-radius:99px; border:2px solid var(--teal); background:transparent; color:var(--teal); font-size:.75rem; font-weight:700; cursor:pointer; font-family:'Poppins',sans-serif; transition:all var(--ease); letter-spacing:.04em; text-transform:uppercase; }
+    .filt-btn.active,.filt-btn:hover { background:var(--teal); color:#fff; }
+    .acts-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(310px,1fr)); gap:24px; }
+    @media(max-width:600px){ .acts-grid{ grid-template-columns:1fr; } }
+  </style>
+</head>
+<body>
+<div class="topbar" id="siteTopbar"></div>
+<header class="site-header" id="siteHeader"></header>
+<nav class="site-nav" id="siteNav"></nav>
+<div class="ticker" id="siteTicker"></div>
+
+<div class="page-hero">
+  <div class="page-hero-inner">
+    <div class="breadcrumb"><a href="index.html">Home</a><span>/</span><span>Activities</span></div>
+    <h1>📸 School Activities</h1>
+    <p>Latest Events, Notices, Celebrations &amp; School News</p>
+  </div>
+</div>
+
+<main>
+  <div class="container">
+    <div class="filter-row" id="filterRow">
+      <button class="filt-btn active" data-cat="All">All</button>
+      <button class="filt-btn" data-cat="Notice">Notice</button>
+      <button class="filt-btn" data-cat="Event">Event</button>
+      <button class="filt-btn" data-cat="Academic">Academic</button>
+      <button class="filt-btn" data-cat="Sports">Sports</button>
+      <button class="filt-btn" data-cat="Cultural">Cultural</button>
+      <button class="filt-btn" data-cat="Award">Award</button>
+    </div>
+    <div class="acts-grid" id="actsGrid"></div>
+  </div>
+</main>
+
+<footer id="siteFooter"></footer>
+<script src="layout.js"></script>
+<script src="common.js"></script>
+<script>
+const ICONS = { Academic:'📚', Sports:'⚽', Cultural:'🎭', Notice:'📢', Event:'🎉', Award:'🏆', Other:'📌' };
+const COLORS = { Academic:'#e8f4f8', Sports:'#e8f8ee', Cultural:'#fef9e7', Notice:'#fde8e8', Event:'#f3e8ff', Award:'#fff8e8', Other:'#f5f5f5' };
+let all = [];
+let cat = 'All';
+
+function renderActs(list) {
+  const g = document.getElementById('actsGrid');
+  if (!list.length) {
+    g.innerHTML = `<div class="empty-state" style="grid-column:1/-1">
+      <div class="es-icon">📭</div><h4>No Activities Yet</h4>
+      <p>Activities will appear here once posted by the admin.</p></div>`;
+    return;
+  }
+  g.innerHTML = list.map(a => `
+    <div class="act-card">
+      <div class="act-thumb" style="background:${COLORS[a.category]||'#f5f5f5'}">
+        ${a.image ? `<img src="${a.image}" alt="${a.title}" />` : ''}
+        <span class="act-emoji" style="${a.image ? 'display:none' : ''}">${ICONS[a.category]||'📌'}</span>
+        <div class="act-cat"><span class="tag tag-teal">${a.category || 'General'}</span></div>
+      </div>
+      <div class="act-info">
+        <div class="act-date">📅 ${fmtDate(a.date, 'long')}</div>
+        <div class="act-title">${a.title}</div>
+        <div class="act-desc">${a.description}</div>
+      </div>
+    </div>`).join('');
+}
+
+document.getElementById('filterRow').addEventListener('click', e => {
+  if (!e.target.classList.contains('filt-btn')) return;
+  cat = e.target.dataset.cat;
+  document.querySelectorAll('.filt-btn').forEach(b => b.classList.toggle('active', b.dataset.cat === cat));
+  renderActs(cat === 'All' ? all : all.filter(a => (a.category || 'Other') === cat));
+});
+
+all = DB.get('activities', []).sort((a, b) => new Date(b.date) - new Date(a.date));
+renderActs(all);
+</script>
+</body>
+</html>
