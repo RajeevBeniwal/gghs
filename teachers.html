@@ -36,7 +36,7 @@
 <script src="datastore.js"></script><script src="layout.js"></script><script src="common.js"></script>
 <script>
 var allTeachers=[];
-function isHead(t){var d=(t.designation||'').toLowerCase();return d.includes('principal')||d.includes('headmistress')||d.includes('head mistress')||d.includes('incharge');}
+function isHead(t){var d=(t.designation||'').toLowerCase();return d.includes('principal')||d.includes('Headmaster')||d.includes('head mistress')||d.includes('incharge');}
 function renderHead(list){
   var head=list.find(isHead);
   var sp=document.getElementById('headSpotlight');
