@@ -6,30 +6,43 @@
 
 /* ─── TOKENS ─── */
 :root {
-  --teal:       #0d4f5c;
-  --teal-dk:    #082f38;
-  --teal-md:    #145e6e;
-  --teal-lt:    #1a7a8f;
-  --gold:       #c8960c;
-  --gold-lt:    #e8b84b;
-  --gold-pale:  #fdf5dc;
-  --gold-xpale: #fffbf0;
-  --cream:      #f8f6f1;
+  /* 🔴 ROYAL MAROON PALETTE */
+  --teal:       #6d0019;   /* main royal maroon */
+  --teal-dk:    #3b000d;   /* deep wine */
+  --teal-md:    #8b1e2d;   /* rich maroon */
+  --teal-lt:    #a83232;   /* soft maroon */
+
+  /* 🟡 ROYAL GOLD PALETTE */
+  --gold:       #d4af37;   /* metallic gold */
+  --gold-lt:    #f5d76e;   /* light gold */
+  --gold-pale:  #fff8e1;
+  --gold-xpale: #fffbf2;
+
+  /* ⚪ NEUTRALS */
+  --cream:      #faf7f2;
   --white:      #ffffff;
-  --ink:        #1a1a2e;
-  --ink-lt:     #3d3d5c;
-  --muted:      #7a8090;
-  --border:     #e2ddd4;
-  --success:    #1a7a4a;
-  --danger:     #a31515;
-  --info-bg:    #e8f4f8;
-  --info-fg:    #0d4f5c;
+  --ink:        #2b0f14;   /* warm dark text */
+  --ink-lt:     #5c3a3f;
+  --muted:      #8c6f74;
+  --border:     #eaded3;
+
+  /* ✅ STATUS COLORS (match theme) */
+  --success:    #2e7d32;
+  --danger:     #8b0000;
+
+  /* INFO */
+  --info-bg:    #fff4e0;
+  --info-fg:    #6d0019;
+
+  /* UI */
   --rad:        14px;
   --rad-sm:     8px;
   --rad-lg:     20px;
-  --shadow-sm:  0 2px 12px rgba(13,79,92,.08);
-  --shadow-md:  0 6px 28px rgba(13,79,92,.13);
-  --shadow-lg:  0 16px 56px rgba(13,79,92,.18);
+
+  --shadow-sm:  0 2px 12px rgba(109,0,25,.08);
+  --shadow-md:  0 6px 28px rgba(109,0,25,.15);
+  --shadow-lg:  0 16px 56px rgba(109,0,25,.2);
+
   --ease:       .28s cubic-bezier(.4,0,.2,1);
 }
 
