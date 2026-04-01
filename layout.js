@@ -11,7 +11,7 @@
         <span>📍 Village Kagdana, Tehsil Nathusari Chopta, Sirsa, Haryana – 125110</span>
         <div class="topbar-right">
           <span class="topbar-email">📧 gghs4700kagdana@gmail.com</span>
-          <a href="admin.html">🔐 Admin Portal</a>
+          <a href="admin.html">🔐 Created by Rajeev Beniwal</a>
         </div>
       </div>`;
   }
@@ -30,7 +30,7 @@
         <div class="hdr-badges">
           <span class="hdr-badge">Est. 1985</span>
           <span class="hdr-badge">Class VI – X</span>
-          <span class="hdr-badge">Girls Only</span>
+          <span class="hdr-badge">Girls Only School</span>
         </div>
       </div>`;
   }
@@ -46,7 +46,6 @@
           <li><a href="teachers.html">Teachers</a></li>
           <li><a href="activities.html">Activities</a></li>
           <li><a href="results.html">Results</a></li>
-          <li><a href="admin.html" class="nav-cta">Admin Panel</a></li>
         </ul>
         <button class="hamburger" id="ham" aria-label="Toggle menu">
           <span></span><span></span><span></span>
@@ -78,7 +77,7 @@
               <h4>Govt. Girls High School Kagdana</h4>
               <p>Village Kagdana, Tehsil Nathusari Chopta<br>District Sirsa, Haryana – 125110<br><br>
               📧 gghs4700kagdana@gmail.com<br>
-              🕐 Mon – Sat: 8:00 AM – 2:00 PM<br>
+              🕐 Mon – Sat: 8:00 AM – 2:30 PM<br>
               📚 Classes VI to X (Girls Only)</p>
             </div>
             <div class="foot-col">
@@ -89,7 +88,6 @@
                 <li><a href="teachers.html">Our Teachers</a></li>
                 <li><a href="activities.html">Activities</a></li>
                 <li><a href="results.html">Student Results</a></li>
-                <li><a href="admin.html">Admin Panel</a></li>
               </ul>
             </div>
             <div class="foot-col">
