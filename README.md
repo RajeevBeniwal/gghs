@@ -1,27 +1,64 @@
-# GGHS Kagdana – School Website
-## Govt. Girls High School Kagdana, Sirsa, Haryana – 125110
+# Govt. Girls High School Kagdana — Website
 
-## FILES – upload ALL to GitHub repo root
-index.html, about.html, teachers.html, activities.html, results.html,
-result-print.html, admin.html, style.css, common.js, layout.js,
-datastore.js, data.json
+A fully static school website for **Govt. Girls High School Kagdana, Sirsa, Haryana**.  
+No server required — works on **GitHub Pages**, Netlify, or any static host.
 
-## ADMIN LOGIN
-Username: admin | Password: admin@gghs123
+## 🚀 Deploying to GitHub Pages
 
-## KEY WORKFLOW – HOW DATA BECOMES VISIBLE ON ALL DEVICES
-1. Login to admin.html
-2. Add/update results, teachers, activities
-3. Click sidebar "Publish" -> "Download data.json"
-4. Upload data.json to GitHub repo root (replace existing)
-5. Wait 1-2 min -> website shows new data on all devices
+1. Create a free GitHub account at [github.com](https://github.com)
+2. Create a new repository (e.g. `gghs-kagdana`)
+3. Upload all files from this folder to the repository
+4. Go to **Settings → Pages → Source → Deploy from branch → main**
+5. Your website will be live at: `https://your-username.github.io/gghs-kagdana/`
 
-## A4 RESULT PRINT
-Results page -> search student -> click Print/Download A4 button
--> new tab opens -> browser print dialog -> Save as PDF -> A4 paper
+## 📄 Pages
 
-## EXCEL FORMAT (7 subjects)
-RollNo, SRN, Name, FatherName, MotherName, DOB, Class, Section, Year
-English_Max, English_Obt, Hindi_Max, Hindi_Obt, Maths_Max, Maths_Obt,
-Science_Max, Science_Obt, Social_Max, Social_Obt, Sanskrit_Max, Sanskrit_Obt,
-Drawing_Max, Drawing_Obt, Position, Remarks
+| File | Description |
+|------|-------------|
+| `index.html` | Home page with hero, notices, activities |
+| `about.html` | School overview, vision, facilities |
+| `teachers.html` | Faculty profiles |
+| `activities.html` | Activities & notices |
+| `gallery.html` | 📸 **NEW** — Photo gallery with lightbox |
+| `results.html` | Student results search |
+| `admin.html` | Admin panel (password protected) |
+| `style.css` | Shared stylesheet (Maroon & Gold theme) |
+| `common.js` | Shared JS utilities |
+
+## 🔐 Admin Panel
+
+Access at: `yoursite.com/admin.html` (link in top-right corner of all pages)
+
+**Default login:** `admin` / `admin123`
+
+### Admin Features
+- 📋 **Results** — Upload from Excel (.xlsx). Template includes: Roll No, SRN, Name, Class, Section, Father Name, **Mother Name**, **DOB**, Year, Subject marks
+- 🖼️ **Gallery** — Add/Edit/Delete photos with title, category, description
+- 📸 **Activities** — Post notices and school events
+- 👩‍🏫 **Teachers** — Manage faculty profiles with photos
+- 🖼️ **Logo** — Upload school logo image
+- 📞 **Contact** — Update address, phone, email, hours
+- 🔒 **Password** — Change admin password
+- 💾 **Data** — Export/Import all data as JSON backup
+
+## 💡 How Data Works
+
+All data is stored in the browser's **localStorage** — no server or database needed.  
+This means:
+- Data is stored on the device where admin logs in
+- To share data across devices, use **Export All Data (JSON)** and **Import Data (JSON)**
+- Suitable for single-admin use on a dedicated school computer
+
+## 📱 Features
+
+- ✅ Mobile responsive
+- ✅ Sticky navigation
+- ✅ News ticker
+- ✅ Hero image slider
+- ✅ Gallery with lightbox viewer
+- ✅ Excel result upload with preview
+- ✅ Search results by Roll No, Name, or SRN
+- ✅ Class-wise result table
+- ✅ Print result cards
+- ✅ Dynamic school logo
+- ✅ Editable contact details

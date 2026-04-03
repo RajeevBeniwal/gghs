@@ -2,152 +2,312 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
-  <title>Govt. Girls High School Kagdana – Sirsa, Haryana</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Govt Girls High School Kagdana – Sirsa</title>
   <link rel="stylesheet" href="style.css" />
   <style>
-    .hero-slides{height:480px}
-    @media(max-width:768px){.hero-slides{height:340px}}
-    .notice-box{background:#fff;border-radius:var(--rad);box-shadow:var(--shadow-sm);padding:28px;height:100%}
-    .notice-box h3{font-family:'Playfair Display',serif;font-size:1.2rem;color:var(--teal);margin-bottom:18px}
-    .act-mini{display:flex;gap:14px;padding:13px 0;border-bottom:1px solid var(--border);align-items:flex-start}
-    .act-mini:last-child{border-bottom:none}
-    .act-mini-icon{font-size:1.6rem;flex-shrink:0}
-    .act-mini-body h4{font-size:.86rem;font-weight:700;color:var(--teal);margin-bottom:3px}
-    .act-mini-body p{font-size:.76rem;color:var(--muted);line-height:1.5}
-    .act-mini-date{font-size:.7rem;color:var(--gold);font-weight:700}
-    .about-band{background:linear-gradient(135deg,var(--teal-dk),var(--teal));padding:64px 0}
-    .about-band-inner{display:grid;grid-template-columns:1fr 1fr;gap:52px;align-items:center}
-    .about-art{background:rgba(255,255,255,.08);border-radius:var(--rad-lg);padding:36px;text-align:center}
-    .about-art .big{font-size:5rem;margin-bottom:12px}
-    .about-art h3{font-family:'Playfair Display',serif;font-size:1.3rem;color:#fff;margin-bottom:6px}
-    .about-art p{font-size:.8rem;color:rgba(255,255,255,.65)}
-    .about-text h2{font-family:'Playfair Display',serif;font-size:clamp(1.7rem,3vw,2.5rem);color:#fff;margin-bottom:16px}
-    .about-text p{font-size:.9rem;line-height:1.85;color:rgba(255,255,255,.8);margin-bottom:20px}
-    .about-values{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:24px}
-    .val-item{background:rgba(255,255,255,.07);border-radius:var(--rad-sm);padding:14px;border-left:3px solid var(--gold)}
-    .val-item h4{font-size:.82rem;font-weight:700;color:var(--gold-lt);margin-bottom:4px}
-    .val-item p{font-size:.75rem;color:rgba(255,255,255,.6)}
-    @media(max-width:768px){.about-band-inner,.about-values{grid-template-columns:1fr}}
+    .hero-slider { height: 460px; }
+    .slide { background-size: cover; background-position: center; }
+    .slide-1 { background: linear-gradient(135deg,#4a0a12 0%,#8b1a28 50%,#6b0f1a 100%); }
+    .slide-2 { background: linear-gradient(135deg,#1a3a4a 0%,#2a5a6a 100%); }
+    .slide-3 { background: linear-gradient(135deg,#2a3a1a 0%,#3a5a2a 100%); }
+    .slide-ornament { font-size:6rem;opacity:.08;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none;white-space:nowrap; }
+    .notice-card { border-left:4px solid var(--gold);background:var(--gold-pale);padding:16px 20px;border-radius:0 var(--radius-sm) var(--radius-sm) 0;margin-bottom:14px; }
+    .notice-card h4 { color:var(--maroon);font-size:.92rem;margin-bottom:4px; }
+    .notice-card p { font-size:.8rem;color:var(--gray-500); }
+    .notice-date { font-size:.72rem;font-weight:700;color:var(--gold);text-transform:uppercase; }
+    .quick-link { display:flex;flex-direction:column;align-items:center;gap:10px;background:var(--white);padding:28px 20px;border-radius:var(--radius);box-shadow:var(--shadow);text-decoration:none;color:var(--text);transition:all var(--transition);text-align:center; }
+    .quick-link:hover { transform:translateY(-4px);box-shadow:var(--shadow-lg);color:var(--maroon); }
+    .quick-link .icon { width:56px;height:56px;border-radius:50%;background:var(--gold-pale);display:flex;align-items:center;justify-content:center;font-size:1.6rem; }
+    .quick-link:hover .icon { background:var(--maroon); }
+    .quick-link span { font-weight:700;font-size:.84rem;text-transform:uppercase;letter-spacing:.04em; }
+    .event-card { background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden; }
+    .event-card .event-top { background:var(--maroon);color:var(--white);padding:16px;display:flex;justify-content:space-between;align-items:center; }
+    .event-card .event-body { padding:18px; }
+    .about-img-box { background:linear-gradient(135deg,var(--maroon),var(--maroon-lt));border-radius:var(--radius);padding:32px;text-align:center;color:var(--white); }
+    .about-img-box .big-icon { font-size:5rem;margin-bottom:12px; }
+    .vision-box { background:var(--maroon);color:var(--white);padding:28px;border-radius:var(--radius); }
+    .vision-box h3 { font-family:'Cormorant Garamond',serif;font-size:1.4rem;color:var(--gold-lt);margin-bottom:10px; }
+    .vision-box p { font-size:.9rem;line-height:1.7;color:rgba(255,255,255,.8); }
   </style>
 </head>
 <body>
-<div class="topbar" id="siteTopbar"></div>
-<header class="site-header" id="siteHeader"></header>
-<nav class="site-nav" id="siteNav"></nav>
-<div class="ticker" id="siteTicker"></div>
 
-<div class="hero-slides">
-  <div class="slide sl-1 active">
-    <div class="slide-overlay"></div>
-    <div class="slide-content container">
-      <span class="tag tag-gold">🌟 Welcome to GGHS Kagdana</span>
-      <h2>Empowering Every Girl<br>Through Quality Education</h2>
-      <p>Nurturing the women leaders of tomorrow in a safe, inclusive and inspiring environment.</p>
-      <div style="display:flex;gap:12px;flex-wrap:wrap"><a href="about.html" class="btn btn-gold btn-lg">Discover Our School</a><a href="results.html" class="btn btn-white">View Results →</a></div>
-    </div>
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="tb-inner">
+    <span class="topbar-address">📍 Village Kagdana, Sirsa, Haryana</span>
+    <span>
+      <span class="topbar-contact"></span>
+      &nbsp;|&nbsp; <a href="admin.html">   ©️ Created by Rajeev Beniwal</a>
+    </span>
   </div>
-  <div class="slide sl-2">
-    <div class="slide-overlay"></div>
-    <div class="slide-content container">
-      <span class="tag tag-gold">🏆 Academic Excellence</span>
-      <h2>Committed to Outstanding<br>Academic Results</h2>
-      <p>Our students consistently excel in HBSE examinations. Check individual results online.</p>
-      <div style="display:flex;gap:12px;flex-wrap:wrap"><a href="results.html" class="btn btn-gold btn-lg">Search My Result</a><a href="teachers.html" class="btn btn-white">Meet Teachers →</a></div>
-    </div>
-  </div>
-  <div class="slide sl-3">
-    <div class="slide-overlay"></div>
-    <div class="slide-content container">
-      <span class="tag tag-gold">🎭 Vibrant School Life</span>
-      <h2>Celebrations, Sports &amp;<br>Cultural Activities</h2>
-      <p>A rich co-curricular life that develops character, creativity and confidence in every student.</p>
-      <div style="display:flex;gap:12px;flex-wrap:wrap"><a href="activities.html" class="btn btn-gold btn-lg">See Activities</a><a href="about.html" class="btn btn-white">Our Facilities →</a></div>
-    </div>
-  </div>
-  <div class="slide-arrows"><button class="s-arrow" id="slidePrev">❮</button><button class="s-arrow" id="slideNext">❯</button></div>
-  <div class="slide-dots" id="slideDots"><div class="sdot active" data-i="0"></div><div class="sdot" data-i="1"></div><div class="sdot" data-i="2"></div></div>
-  <div class="slide-counter" id="slideCounter">1 / 3</div>
 </div>
 
-<div class="stats-strip"><div class="container"><div class="stats-grid">
-  <div class="stat-item"><div class="stat-num" id="stS">—</div><div class="stat-lbl">Students</div></div>
-  <div class="stat-item"><div class="stat-num" id="stT">—</div><div class="stat-lbl">Teachers</div></div>
-  <div class="stat-item"><div class="stat-num">5</div><div class="stat-lbl">Classes (VI–X)</div></div>
-  <div class="stat-item"><div class="stat-num" id="stA">—</div><div class="stat-lbl">Activities</div></div>
-  <div class="stat-item"><div class="stat-num">39+</div><div class="stat-lbl">Years of Service</div></div>
-</div></div></div>
+<!-- HEADER -->
+<header>
+  <div class="header-inner container">
+    <div class="school-logo">🏫</div>
+    <div class="school-info">
+      <div class="school-name">Govt. Girls High School Kagdana</div>
+      <div class="school-sub">Education Department, Haryana &nbsp;•&nbsp; Sirsa District</div>
+      <div class="school-urdu">राजकीय कन्या उच्च विद्यालय कागदाना, सिरसा (हरियाणा)</div>
+    </div>
+    <div class="header-badges">
+      <span class="badge">Est. 1985</span>
+      <span class="badge">Sirsa, Haryana</span>
+      <span class="badge">Class VI – X</span>
+    </div>
+  </div>
+</header>
 
+<!-- NAV -->
+<nav>
+  <div class="nav-inner container">
+    <ul class="nav-links" id="navLinks">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="teachers.html">Teachers</a></li>
+      <li><a href="activities.html">Activities</a></li>
+      <li><a href="gallery.html">Gallery</a></li>
+      <li><a href="results.html">Results</a></li>
+    </ul>
+    <button class="hamburger" id="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+
+<!-- TICKER -->
+<div class="ticker-wrap">
+  <div class="ticker-inner container">
+    <span class="ticker-label">📢 Notice</span>
+    <div style="overflow:hidden;flex:1">
+      <p class="ticker-text" id="tickerText">Loading...</p>
+    </div>
+  </div>
+</div>
+
+<!-- HERO SLIDER -->
+<div class="hero-slider">
+  <div class="slide slide-1 active">
+    <div class="slide-ornament">📚✏️🌟</div>
+    <div class="slide-content">
+      <h2>Empowering Girls Through Education</h2>
+      <p>Nurturing the leaders of tomorrow in a safe and inspiring environment</p>
+      <a href="about.html" class="btn btn-gold">Discover Our School</a>
+    </div>
+  </div>
+  <div class="slide slide-2">
+    <div class="slide-ornament">🏆🎓📖</div>
+    <div class="slide-content">
+      <h2>Academic Excellence &amp; Innovation</h2>
+      <p>Committed to holistic development and outstanding academic results</p>
+      <a href="results.html" class="btn btn-gold">View Results</a>
+    </div>
+  </div>
+  <div class="slide slide-3">
+    <div class="slide-ornament">🌸🌿🌺</div>
+    <div class="slide-content">
+      <h2>Activities, Events &amp; Celebrations</h2>
+      <p>A vibrant school life filled with learning, culture and growth</p>
+      <a href="gallery.html" class="btn btn-gold">View Gallery</a>
+    </div>
+  </div>
+  <div class="slide-dots" id="slideDots">
+    <div class="dot active" data-i="0"></div>
+    <div class="dot" data-i="1"></div>
+    <div class="dot" data-i="2"></div>
+  </div>
+</div>
+
+<!-- STATS -->
+<div class="stats-bar">
+  <div class="container">
+    <div class="stats-grid">
+      <div class="stat-item"><div class="stat-num" id="sStudents">—</div><div class="stat-label">Students</div></div>
+      <div class="stat-item"><div class="stat-num" id="sTeachers">—</div><div class="stat-label">Teachers</div></div>
+      <div class="stat-item"><div class="stat-num" id="sClasses">5</div><div class="stat-label">Classes</div></div>
+      <div class="stat-item"><div class="stat-num" id="sActivities">—</div><div class="stat-label">Activities</div></div>
+      <div class="stat-item"><div class="stat-num">38+</div><div class="stat-label">Years of Service</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN -->
 <main>
-  <div class="container section">
-    <div class="sec-head"><h2>Quick Access</h2><div class="gold-bar"><span>✦</span></div><p class="sub">Find what you need in one click</p></div>
+  <!-- QUICK LINKS -->
+  <div class="container">
+    <div class="section-head mt-8">
+      <h2>Quick Access</h2>
+      <div class="gold-line"></div>
+    </div>
     <div class="grid-4">
-      <a href="results.html" class="quick-tile"><div class="qt-icon">📊</div><div class="qt-label">Student Results</div><div class="qt-sub">Search by Roll / SRN</div></a>
-      <a href="activities.html" class="quick-tile"><div class="qt-icon">📸</div><div class="qt-label">Activities</div><div class="qt-sub">News &amp; Events</div></a>
-      <a href="teachers.html" class="quick-tile"><div class="qt-icon">👩‍🏫</div><div class="qt-label">Our Teachers</div><div class="qt-sub">Faculty Profiles</div></a>
-      <a href="admin.html" class="quick-tile"><div class="qt-icon">🔐</div><div class="qt-label">Admin Panel</div><div class="qt-sub">Staff Login</div></a>
+      <a href="results.html" class="quick-link">
+        <div class="icon">📊</div>
+        <span>Student Results</span>
+        <small style="color:var(--gray-500);font-size:.75rem">Search by Roll No.</small>
+      </a>
+      <a href="gallery.html" class="quick-link">
+        <div class="icon">🖼️</div>
+        <span>Photo Gallery</span>
+        <small style="color:var(--gray-500);font-size:.75rem">School Activities</small>
+      </a>
+      <a href="teachers.html" class="quick-link">
+        <div class="icon">👩‍🏫</div>
+        <span>Our Teachers</span>
+        <small style="color:var(--gray-500);font-size:.75rem">Faculty Profiles</small>
+      </a>
+      <a href="activities.html" class="quick-link">
+        <div class="icon">📸</div>
+        <span>Recent Activities</span>
+        <small style="color:var(--gray-500);font-size:.75rem">News & Events</small>
+      </a>
     </div>
   </div>
 
-  <div class="container section">
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:28px" id="nag">
-      <div class="notice-box"><h3>📢 Latest Notices</h3><div id="homeNotices"><p style="color:var(--muted)">Loading…</p></div><div class="mt-md"><a href="activities.html" class="btn btn-outline btn-sm">View All →</a></div></div>
-      <div class="notice-box"><h3>🎉 Recent Activities</h3><div id="homeActivities"><p style="color:var(--muted)">Loading…</p></div><div class="mt-md"><a href="activities.html" class="btn btn-outline btn-sm">View All →</a></div></div>
+  <!-- NOTICES & EVENTS -->
+  <div class="container" style="margin-top:56px">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:36px;" class="notice-events-grid">
+      <div>
+        <div class="section-head" style="text-align:left;margin-bottom:20px">
+          <h2 style="font-size:1.5rem">📢 Latest Notices</h2>
+          <div class="gold-line" style="margin:8px 0;"></div>
+        </div>
+        <div id="noticeList"></div>
+        <a href="activities.html" class="btn btn-outline btn-sm mt-4">View All →</a>
+      </div>
+      <div>
+        <div class="section-head" style="text-align:left;margin-bottom:20px">
+          <h2 style="font-size:1.5rem">🎉 Recent Activities</h2>
+          <div class="gold-line" style="margin:8px 0;"></div>
+        </div>
+        <div id="activityCards" class="grid-3" style="grid-template-columns:1fr;gap:14px;"></div>
+        <a href="activities.html" class="btn btn-outline btn-sm mt-4">View All →</a>
+      </div>
     </div>
   </div>
 
-  <div class="about-band"><div class="container"><div class="about-band-inner">
-    <div class="about-art">
-      <div class="big">🏫</div><h3>Govt. Girls High School</h3><p>Kagdana · Nathusari Chopta · Sirsa · Haryana</p>
-      <div style="margin-top:20px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
-        <div style="text-align:center"><div style="font-family:'Playfair Display',serif;font-size:2rem;font-weight:800;color:var(--gold-lt)">125110</div><div style="font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.5)">Pin Code</div></div>
-        <div style="width:1px;background:rgba(255,255,255,.15)"></div>
-        <div style="text-align:center"><div style="font-family:'Playfair Display',serif;font-size:2rem;font-weight:800;color:var(--gold-lt)">HBSE</div><div style="font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.5)">Affiliated</div></div>
+  <!-- ABOUT SNAPSHOT -->
+  <div style="background:var(--gray-100);padding:56px 0;margin-top:56px">
+    <div class="container">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center" class="about-grid">
+        <div class="about-img-box">
+          <div class="big-icon">🏫</div>
+          <div style="font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:700;margin-bottom:8px">Govt. Girls High School</div>
+          <div style="color:var(--gold-lt);font-size:.85rem;font-weight:600">Kagdana • Sirsa • Haryana</div>
+          <div style="margin-top:20px;display:flex;justify-content:center;gap:20px">
+            <div class="vision-box" style="flex:1;text-align:left">
+              <h3>🎯 Vision</h3>
+              <p>To be a centre of excellence in girls' education that transforms lives and communities.</p>
+            </div>
+          </div>
+        </div>
+        <div>
+          <h2 style="font-family:'Cormorant Garamond',serif;font-size:2.1rem;color:var(--maroon);margin-bottom:16px">About Our School</h2>
+          <p style="line-height:1.8;color:var(--gray-700);margin-bottom:16px">
+            Govt. Girls High School Kagdana is a government institution located in Village Kagdana, Sirsa District, Haryana. Established in 1985, the school has served the community for over three decades providing quality education to girls from Classes VI to X.
+          </p>
+          <p style="line-height:1.8;color:var(--gray-700);margin-bottom:24px">
+            The school is committed to providing a holistic education that balances academic rigour with cultural values, sports and extra-curricular activities, all in a safe and nurturing environment.
+          </p>
+          <a href="about.html" class="btn btn-primary">Learn More About Us</a>
+        </div>
       </div>
     </div>
-    <div class="about-text">
-      <h2>About Our School</h2>
-      <p>Govt. Girls High School Kagdana is a government institution under the Haryana Education Department, serving girls of Village Kagdana and surrounding areas. Offering classes from VI to X, the school follows the HBSE curriculum.</p>
-      <p>For nearly four decades, GGHS Kagdana has been a pillar of girls' education in the region, committed to academic excellence, character development and holistic growth.</p>
-      <div class="about-values">
-        <div class="val-item"><h4>🎯 Vision</h4><p>Every girl educated, empowered and inspired to lead.</p></div>
-        <div class="val-item"><h4>📌 Mission</h4><p>Providing quality, inclusive education to all girls.</p></div>
-        <div class="val-item"><h4>🌟 Excellence</h4><p>Consistent top results in HBSE examinations.</p></div>
-        <div class="val-item"><h4>🤝 Community</h4><p>Serving village Kagdana and Nathusari Chopta block.</p></div>
-      </div>
-      <div class="mt-lg"><a href="about.html" class="btn btn-gold">Read More About Us</a></div>
-    </div>
-  </div></div></div>
+  </div>
 </main>
 
-<footer id="siteFooter"></footer>
-<script src="datastore.js"></script>
-<script src="layout.js"></script>
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <div class="footer-top">
+      <div class="footer-col">
+        <h4>🏫 School Info</h4>
+        <p class="footer-address">Govt. Girls High School Kagdana<br>Village Kagdana, Sirsa, Haryana</p>
+      </div>
+      <div class="footer-col">
+        <h4>🔗 Quick Links</h4>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="about.html">About School</a></li>
+          <li><a href="teachers.html">Faculty</a></li>
+          <li><a href="activities.html">Activities</a></li>
+          <li><a href="gallery.html">Gallery</a></li>
+          <li><a href="results.html">Results</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>📞 Contact</h4>
+        <p class="footer-contact-info">📧 gghs.kagdana@gmail.com<br>📍 Village Kagdana, Sirsa<br>🕐 Mon – Sat: 8:00 AM – 2:00 PM</p>
+      </div>
+      <div class="footer-col">
+        <h4>🏛️ Education Dept.</h4>
+        <p>Under Haryana Education Department<br>District: Sirsa, Haryana</p>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bar">
+    <div class="container">© 2024 Govt. Girls High School Kagdana, Sirsa. All Rights Reserved. | Education Department, Haryana</div>
+  </div>
+</footer>
+
 <script src="common.js"></script>
 <script>
-var curS=0,slides=document.querySelectorAll('.slide'),dots=document.querySelectorAll('.sdot'),ctr=document.getElementById('slideCounter');
-function goSlide(n){slides[curS].classList.remove('active');dots[curS].classList.remove('active');curS=(n+slides.length)%slides.length;slides[curS].classList.add('active');dots[curS].classList.add('active');ctr.textContent=(curS+1)+' / '+slides.length;}
-dots.forEach(function(d){d.addEventListener('click',function(){goSlide(+d.dataset.i);});});
-document.getElementById('slideNext').addEventListener('click',function(){goSlide(curS+1);});
-document.getElementById('slidePrev').addEventListener('click',function(){goSlide(curS-1);});
-setInterval(function(){goSlide(curS+1);},5500);
-var nag=document.getElementById('nag');
-function fixGrid(){if(window.innerWidth<768&&nag)nag.style.gridTemplateColumns='1fr';}
-fixGrid();window.addEventListener('resize',fixGrid);
-(async function(){
-  await DataStore.load();
-  var res=DataStore.get('results'),tch=DataStore.get('teachers'),acts=DataStore.get('activities');
-  var uniq=new Set(res.map(function(r){return r.srn||r.rollNo;})).size;
-  document.getElementById('stS').textContent=uniq||'—';
-  document.getElementById('stT').textContent=tch.length||'—';
-  document.getElementById('stA').textContent=acts.length||'—';
-  initTicker();
-  var ICONS={Academic:'📚',Sports:'⚽',Cultural:'🎭',Notice:'📢',Event:'🎉',Award:'🏆',Other:'📌'};
-  var nEl=document.getElementById('homeNotices');
-  nEl.innerHTML=!acts.length?'<p style="color:var(--muted);font-size:.85rem">No notices yet.</p>':acts.slice(0,4).map(function(a){var d=new Date(a.date);return '<div class="notice-item"><div class="notice-date"><div class="nd-day">'+d.getDate()+'</div><div class="nd-mon">'+d.toLocaleDateString('en',{month:'short'})+'</div></div><div class="notice-body"><h4>'+a.title+'</h4><p>'+a.description.substring(0,80)+(a.description.length>80?'…':'')+'</p></div></div>';}).join('');
-  var aEl=document.getElementById('homeActivities');
-  aEl.innerHTML=!acts.length?'<p style="color:var(--muted);font-size:.85rem">No activities yet.</p>':acts.slice(0,4).map(function(a){return '<div class="act-mini"><div class="act-mini-icon">'+(ICONS[a.category]||'📌')+'</div><div class="act-mini-body"><div class="act-mini-date">'+fmtDate(a.date)+'</div><h4>'+a.title+'</h4><p>'+a.description.substring(0,70)+(a.description.length>70?'…':'')+'</p></div></div>';}).join('');
-})();
+let currentSlide = 0;
+const slides = document.querySelectorAll('.slide');
+const dots = document.querySelectorAll('.dot');
+function goSlide(n) {
+  slides[currentSlide].classList.remove('active');
+  dots[currentSlide].classList.remove('active');
+  currentSlide = (n + slides.length) % slides.length;
+  slides[currentSlide].classList.add('active');
+  dots[currentSlide].classList.add('active');
+}
+dots.forEach(d => d.addEventListener('click', () => goSlide(+d.dataset.i)));
+setInterval(() => goSlide(currentSlide + 1), 5000);
+
+function loadStats() {
+  const results = DB.get('results', []);
+  const teachers = DB.get('teachers', []);
+  const activities = DB.get('activities', []);
+  const unique = [...new Set(results.map(r => r.rollNo))].length;
+  document.getElementById('sStudents').textContent = unique || '—';
+  document.getElementById('sTeachers').textContent = teachers.length || '—';
+  document.getElementById('sActivities').textContent = activities.length || '—';
+}
+
+function loadNotices() {
+  const activities = DB.get('activities', []);
+  const el = document.getElementById('noticeList');
+  if (!activities.length) { el.innerHTML = '<p style="color:var(--gray-500);font-size:.88rem">No notices posted yet.</p>'; return; }
+  el.innerHTML = activities.slice(0,4).map(a => `
+    <div class="notice-card">
+      <div class="notice-date">${new Date(a.date).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'})}</div>
+      <h4>${a.title}</h4>
+      <p>${a.description.substring(0,90)}${a.description.length>90?'...':''}</p>
+    </div>
+  `).join('');
+}
+
+function loadActivityCards() {
+  const activities = DB.get('activities', []);
+  const el = document.getElementById('activityCards');
+  if (!activities.length) { el.innerHTML = '<p style="color:var(--gray-500);font-size:.88rem">No activities posted yet.</p>'; return; }
+  el.innerHTML = activities.slice(0,3).map(a => `
+    <div class="card" style="display:flex;gap:14px;padding:14px;align-items:flex-start;border-radius:var(--radius-sm)">
+      <div style="font-size:2rem">${a.icon||'📌'}</div>
+      <div>
+        <div style="font-weight:700;font-size:.9rem;color:var(--maroon)">${a.title}</div>
+        <div style="font-size:.75rem;color:var(--gray-500);margin-top:2px">${new Date(a.date).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'})}</div>
+        <div style="font-size:.82rem;margin-top:6px">${a.description.substring(0,80)}...</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+loadStats(); loadNotices(); loadActivityCards();
+
+const nGrid = document.querySelector('.notice-events-grid');
+if (window.innerWidth < 768 && nGrid) nGrid.style.gridTemplateColumns = '1fr';
 </script>
 </body>
 </html>
