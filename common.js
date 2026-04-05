@@ -158,7 +158,7 @@ function printResultCard(r) {
   }).join('');
   const pct = totalMax ? (totalObt/totalMax*100).toFixed(1) : 0;
   const grade = getGrade(Number(pct));
-  const isPass = Number(pct) >= 33 && failedSubjects < 2;
+  const isPass = Number(pct) >= 33 && failedSubjects < 1;
   const c = getContact();
 
   const html = `<!DOCTYPE html>
